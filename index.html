@@ -20,7 +20,6 @@
       --glow: rgba(184,74,26,.08);
     }
     
-    /* Koyu Tema Değişkenleri */
     [data-theme="dark"] {
       --bg: #141414; --bg2: #1e1e1e; --card: #181818; --border: #2e2e2e;
       --accent: #e56532; --text: #e5e5e5; --muted: #8f8f8f;
@@ -33,7 +32,6 @@
     .app::before { content:''; position:fixed; top:-150px; left:50%; transform:translateX(-50%); width:500px; height:500px; background:radial-gradient(circle,var(--glow),transparent 70%); pointer-events:none; transition: background 0.3s; }
     .content { position:relative; width:100%; max-width:560px; display:flex; flex-direction:column; align-items:center; }
     
-    /* Üst Bar ve Tema Butonu */
     .top-bar { width: 100%; display: flex; justify-content: flex-end; margin-bottom: 10px; }
     .theme-toggle-btn { background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px var(--shadow); }
     .theme-toggle-btn:hover { background: var(--bg2); }
@@ -105,7 +103,6 @@
     .action-btn.share-btn { background:var(--bg2); color:var(--text); }
     .action-btn.share-btn:hover { background:var(--border); }
 
-    /* Dış Bağlantılar (IMDb, Letterboxd, TMDb) */
     .outbound-links-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
     .action-btn.lb-btn { background:#202830; color:#00e054; }
     .action-btn.lb-btn:hover { background:#14191e; }
@@ -130,7 +127,6 @@
     .wa-weights { font-size: 10px; color: var(--muted); opacity:0.8; letter-spacing: .08em; line-height: 1.5; }
     
     .scores { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--border); }
-    /* Puan Kartlarından Link ve Hover Efekti Kaldırıldı */
     .score-cell { background:var(--card); padding:22px 14px; display:flex; flex-direction:column; align-items:center; gap:7px; }
     
     .score-name { font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
@@ -567,8 +563,9 @@ function fetchDD(q) {
 function loadFilm(id, mt, isRandom) {
   var currentSearchVal = qEl.value.trim();
   
+  // DÜZELTME: include_video_language eklendi (TR ve EN fragmanları çeker)
   Promise.all([
-    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar").then(function(r){return r.json()}),
+    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar&include_video_language=tr,en,null").then(function(r){return r.json()}),
     fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "/reviews?api_key=" + TK).then(function(r){return r.json()})
   ])
   .then(function(results) {
@@ -582,7 +579,10 @@ function loadFilm(id, mt, isRandom) {
       var plot    = dd.overview || "";
       var rawPoster = dd.poster_path ? "https://image.tmdb.org/t/p/w154" + dd.poster_path : null;
       var genres  = (dd.genres || []).slice(0, 2).map(function(g) { return g.name; }).join(", ");
-      var trailer = (dd.videos && dd.videos.results || []).find(function(v) { return v.site === "YouTube" && v.type === "Trailer"; });
+      
+      var videos = dd.videos && dd.videos.results ? dd.videos.results : [];
+      var trailer = videos.find(function(v) { return v.site === "YouTube" && v.type === "Trailer"; }) || videos.find(function(v) { return v.site === "YouTube"; });
+      
       var tmdbScore  = dd.vote_average && dd.vote_count > 10 ? parseFloat(dd.vote_average.toFixed(1)) : null;
 
       var rawTime = dd.runtime || (dd.episode_run_time && dd.episode_run_time.length > 0 ? dd.episode_run_time[0] : null);
@@ -671,7 +671,6 @@ function loadFilm(id, mt, isRandom) {
         var letterboxdUrl = "https://letterboxd.com/tmdb/" + dd.id; 
 
         function bw(n, max) { return n === null ? 0 : Math.min(100, Math.round(n / max * 100)); }
-        // Dış bağlantı linki (a tag) tamamen kaldırıldı, saf bilgi kutusu oldu
         function sc(name, val, cls, w, sub) {
           var content = '<span class="score-name">' + name + '</span><span class="score-num ' + cls + '">' + val + '</span><div class="bar"><div class="bar-fill ' + cls + '" data-w="' + w + '" style="width:0%"></div></div><span class="score-sub">' + sub + '</span>';
           return '<div class="score-cell">' + content + '</div>';
@@ -700,7 +699,7 @@ function loadFilm(id, mt, isRandom) {
         }
 
         var tagsHtml = '';
-        if (isRandom) { tagsHtml += '<span class="tag-pill random">💎 Günün Keşfi</span>'; }
+        if (isRandom) { tagsHtml += '<span class="tag-pill random">💎 Keşif</span>'; }
         if (metaScore !== null && imdbScore !== null && metaScore >= 75 && imdbScore <= 6.8) { tagsHtml += '<span class="tag-pill cinephile">🎬 Sinefiller İçin</span>'; }
         if (imdbScore !== null && imdbScore >= 8.0 && year && parseInt(year) < 2000) { tagsHtml += '<span class="tag-pill timeless">⏳ Zamana Direnen</span>'; }
 
@@ -708,7 +707,6 @@ function loadFilm(id, mt, isRandom) {
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: shareText }));
         var metaLine = [year, timeStr, type, genres].filter(Boolean).join(" · ");
 
-        // Yeni Dış Bağlantılar (IMDb, Letterboxd, TMDb)
         var lbBtnHtml = '<a class="action-btn lb-btn" href="' + letterboxdUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>Letterboxd</a>';
         var imdbBtnHtml = imdbLink ? '<a class="action-btn imdb-btn" href="' + imdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>' : '';
         var tmdbBtnHtml = tmdbLink ? '<a class="action-btn tmdb-btn" href="' + tmdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>' : '';
