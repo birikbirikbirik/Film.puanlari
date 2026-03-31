@@ -117,15 +117,28 @@
     
     .plot { font-size:13.5px; line-height:1.7; color:var(--muted); }
 
-    /* Yorumlar Bölümü */
+    /* Yorumlar Bölümü - GÜNCELLENDİ */
     .reviews-wrap { padding: 0 24px 24px; border-top: 1.5px solid var(--border); background: var(--card); }
     .rev-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); margin: 20px 0 12px; letter-spacing: .05em; }
     .review-card { background: var(--bg2); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid var(--border); }
     .rev-author { font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
     .rev-author span.rating { font-size: 11px; color: var(--tmdb); background: rgba(13, 148, 136, 0.1); padding: 2px 6px; border-radius: 4px; }
-    .rev-content { font-size: 13px; line-height: 1.6; color: var(--text); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
     
-    /* Yeni Çeviri Butonu Tasarımı */
+    /* Yorum metni artık kesilmiyor, scroll eklendi */
+    .rev-content { 
+      font-size: 13px; 
+      line-height: 1.6; 
+      color: var(--text); 
+      max-height: 150px; 
+      overflow-y: auto; 
+      padding-right: 5px;
+    }
+    
+    /* Scrollbar Tasarımı (Webkit tarayıcılar için) */
+    .rev-content::-webkit-scrollbar { width: 4px; }
+    .rev-content::-webkit-scrollbar-track { background: var(--border); border-radius: 4px; }
+    .rev-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+    
     .rev-translate-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 12px; color: #3b82f6; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; padding: 0; transition: opacity 0.2s; }
     .rev-translate-btn:hover { opacity: 0.7; }
     .rev-translate-btn svg { width: 14px; height: 14px; }
@@ -178,7 +191,7 @@
       <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <div id="modal-content" class="modal-body">
-      </div>
+    </div>
   </div>
 </div>
 
@@ -255,10 +268,9 @@ window.shareFilm = function(btn) {
   }
 };
 
-// Modal ve Çeviri Fonksiyonları
 function openModal() {
   modal.classList.add("active");
-  document.body.style.overflow = "hidden"; // Arka planın kaymasını engeller
+  document.body.style.overflow = "hidden";
 }
 
 function closeModal() {
@@ -266,18 +278,19 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-// Modal dışına tıklayınca kapatma
 modal.addEventListener("click", function(e) {
   if (e.target === modal) {
     closeModal();
   }
 });
 
-window.translateText = function(text) {
-  openModal();
-  modalContent.innerHTML = '<div class="modal-spinner"><div class="spinner"></div></div>'; // Yükleniyor animasyonu
+// Çeviri fonksiyonu tamamen yenilendi - Data attribute üzerinden güvenli okuma
+window.translateText = function(btn) {
+  var text = decodeURIComponent(btn.dataset.text);
   
-  // Google'ın gizli (backend/extension) translate endpoint'i
+  openModal();
+  modalContent.innerHTML = '<div class="modal-spinner"><div class="spinner"></div></div>';
+  
   var url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=" + encodeURIComponent(text);
   
   fetch(url)
@@ -285,7 +298,6 @@ window.translateText = function(text) {
     .then(function(data) {
       var translated = "";
       if (data && data[0]) {
-        // Gelen parçalı veriyi birleştiriyoruz
         data[0].forEach(function(item) {
           if (item[0]) translated += item[0];
         });
@@ -382,14 +394,14 @@ function doSearch() {
                 var ratingHtml = (rev.author_details && rev.author_details.rating) ? '<span class="rating">⭐ ' + rev.author_details.rating + '/10</span>' : '';
                 var content = rev.content || "";
                 
-                // Güvenli string gönderimi için HTML escape işlemleri
-                var safeContent = content.replace(/"/g, '&quot;').replace(/'/g, "\\'").replace(/\n/g, ' ');
+                // Güvenli şifreleme - Kırılmaz yapı
+                var safeContent = encodeURIComponent(content);
 
                 reviewsHtml += '<div class="review-card">' +
                                  '<div class="rev-author">' + author + ratingHtml + '</div>' +
                                  '<div class="rev-content">' + content + '</div>' +
-                                 // Link yerine butona çevrildi ve modal fonksiyonu bağlandı
-                                 '<button class="rev-translate-btn" onclick="translateText(\'' + safeContent + '\')">' +
+                                 // Butona onclick ile string göndermek yerine parametre olarak "this" (butonun kendisi) gönderiliyor
+                                 '<button class="rev-translate-btn" data-text="' + safeContent + '" onclick="translateText(this)">' +
                                    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>' +
                                    'Sitede Çevir' +
                                  '</button>' +
