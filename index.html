@@ -138,12 +138,12 @@
     .rev-translate-btn:hover { opacity: 0.7; }
     .rev-translate-btn svg { width: 14px; height: 14px; }
     
-    /* Benzer Filmler CSS */
-    .recs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 10px; }
+    /* GÜNCELLENMİŞ Benzer Filmler CSS - Zarif ve Orantılı Boyutlandırma */
+    .recs-grid { display: grid; grid-template-columns: repeat(2, 130px); gap: 16px; justify-content: center; margin: 0 auto 10px; }
     .rec-card { cursor: pointer; position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px var(--shadow); transition: transform 0.2s; background: var(--bg2); }
     .rec-card:hover { transform: scale(1.02); }
     .rec-card img { width: 100%; aspect-ratio: 2/3; display: block; object-fit: cover; }
-    .rec-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 30px 10px 12px; font-size: 12px; font-weight: 500; text-align: center; line-height: 1.3; }
+    .rec-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 24px 8px 10px; font-size: 11px; font-weight: 500; text-align: center; line-height: 1.3; }
 
     .loading { display:flex; flex-direction:column; align-items:center; gap:14px; padding:44px 0; color:var(--muted); font-size:13px; letter-spacing:.1em; }
     .spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
@@ -219,6 +219,7 @@ var siteTitle = document.getElementById("site-title");
 var timer = null;
 var selId = null;
 var selMt = null;
+var currentCastHtml = ""; // Kadro HTML'ini güvenle tutmak için
 
 // Modal Kontrolleri
 function openGenericModal(title, contentHTML) {
@@ -245,14 +246,13 @@ function openTrailerModal(key) {
 
 function closeTrailerModal() {
   document.getElementById("trailer-modal").classList.remove("active");
-  document.getElementById("trailer-modal-content").innerHTML = ''; // Videoyu susturur
+  document.getElementById("trailer-modal-content").innerHTML = ''; 
   document.body.style.overflow = "";
 }
 
 document.getElementById("trailer-modal").addEventListener("click", function(e) {
   if (e.target === this) closeTrailerModal();
 });
-
 
 function loadRandomDiscovery() {
   qEl.value = "";
@@ -407,11 +407,15 @@ function fetchDD(q) {
 function loadFilm(id, mt, isRandom) {
   var currentSearchVal = qEl.value.trim();
   
-  // Tüm ekstra verileri (videolar, platformlar, kadro, öneriler) tek API isteğiyle çekiyoruz.
-  fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar,reviews")
-  .then(function(r){return r.json()})
-  .then(function(dd) {
-      
+  // HATA 3 ÇÖZÜMÜ: Yorumları, Türkçe dil filtresine takılmamaları için eskisi gibi ayrı ve filtresiz çektim.
+  Promise.all([
+    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids,watch/providers,credits,recommendations,similar").then(function(r){return r.json()}),
+    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "/reviews?api_key=" + TK).then(function(r){return r.json()})
+  ])
+  .then(function(results) {
+      var dd = results[0];
+      var revData = results[1];
+
       var imdbId  = (dd.external_ids && dd.external_ids.imdb_id) || dd.imdb_id;
       var title   = dd.title || dd.name || currentSearchVal;
       var year    = (dd.release_date || dd.first_air_date || "").slice(0, 4);
@@ -430,7 +434,7 @@ function loadFilm(id, mt, isRandom) {
           timeStr = (hours > 0 ? hours + "s " : "") + mins + "dk";
       }
 
-      // 1. Kadro (Credits) Verisinin İşlenmesi
+      // HATA 2 ÇÖZÜMÜ: HTML kodunu inline fonksiyona sokmak yerine, güvenli bir değişkende tuttum.
       var credits = dd.credits || {crew:[], cast:[]};
       var director = credits.crew.find(function(c) { return c.job === 'Director'; });
       var writersArr = credits.crew.filter(function(c) { return c.department === 'Writing' || c.job === 'Screenplay' || c.job === 'Writer'; }).map(function(c) { return c.name; });
@@ -449,10 +453,10 @@ function loadFilm(id, mt, isRandom) {
                       '</div>';
       });
       castHtml += '</div>';
-      var safeCastHtml = encodeURIComponent(castHtml);
+      currentCastHtml = castHtml;
 
-      // 2. İzlenebilecek Platformlar (Watch Providers)
-      var providersTR = dd.watch && dd.watch.providers && dd.watch.providers.results && dd.watch.providers.results.TR;
+      // HATA 1 ÇÖZÜMÜ: TMDb API formatı watch/providers şeklindedir, bu düzeltildi.
+      var providersTR = dd['watch/providers'] && dd['watch/providers'].results && dd['watch/providers'].results.TR;
       var platformsHtml = '';
       if (providersTR && providersTR.flatrate) {
           platformsHtml = '<div class="platforms-wrap">' +
@@ -464,8 +468,6 @@ function loadFilm(id, mt, isRandom) {
           platformsHtml += '</div></div>';
       }
 
-      // 3. Yorumlar
-      var revData = dd.reviews || {results:[]};
       var reviewsHtml = "";
       if (revData.results && revData.results.length > 0) {
           var topReviews = revData.results.slice(0, 5);
@@ -489,7 +491,7 @@ function loadFilm(id, mt, isRandom) {
           reviewsHtml += '</div>';
       }
 
-      // 4. Benzer Filmler (Recommendations)
+      // HATA 4 ÇÖZÜMÜ: Izgara yapısı daraltıldı ve ortalandı.
       var recsHtml = '';
       var recList = (dd.recommendations && dd.recommendations.results && dd.recommendations.results.length > 0) ? dd.recommendations.results : ((dd.similar && dd.similar.results) ? dd.similar.results : []);
       if (recList.length > 0) {
@@ -570,7 +572,7 @@ function loadFilm(id, mt, isRandom) {
               '</div>' +
             '</div>' +
             platformsHtml +
-            '<div class="kadro-btn-wrap"><button class="action-btn kadro-btn" onclick="openGenericModal(\'Film Kadrosu\', decodeURIComponent(\'' + safeCastHtml + '\'))">🎭 Kadroyu Gör</button></div>' +
+            '<div class="kadro-btn-wrap"><button id="kadro-btn-trigger" class="action-btn kadro-btn">🎭 Kadroyu Gör</button></div>' +
           '</div>' +
           avgHtml +
           '<div class="scores">' +
@@ -586,6 +588,14 @@ function loadFilm(id, mt, isRandom) {
         
         setTimeout(function() {
           resEl.querySelectorAll(".bar-fill[data-w]").forEach(function(el) { el.style.width = el.dataset.w + "%"; });
+          
+          // Kadro butonu tıklama atamasını burada güvenle yapıyoruz
+          var kBtn = document.getElementById("kadro-btn-trigger");
+          if(kBtn) {
+            kBtn.addEventListener("click", function() {
+              openGenericModal('Film Kadrosu', currentCastHtml);
+            });
+          }
         }, 50);
       }
 
