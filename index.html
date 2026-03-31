@@ -56,10 +56,12 @@
     .card { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); }
     @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
     
-    .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; gap:16px; align-items:flex-start; }
+    .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; gap:16px; align-items:flex-start; flex-direction:column; }
+    .card-head-top { display: flex; gap: 16px; align-items: flex-start; width: 100%; }
     .poster { width:64px; height:94px; object-fit:cover; border-radius:6px; flex-shrink:0; box-shadow:0 2px 8px var(--shadow); }
     .poster-ph { width:64px; height:94px; background:var(--bg2); border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; }
     .head-info { flex:1; min-width:0; }
+    .random-badge { font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; display:inline-block; border:1px solid var(--border); padding:3px 8px; border-radius:4px; background:var(--bg2); }
     .card-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.05em; color:var(--text); margin-bottom:4px; line-height:1.1; }
     .card-meta { font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:10px; line-height: 1.4; }
     
@@ -117,24 +119,12 @@
     
     .plot { font-size:13.5px; line-height:1.7; color:var(--muted); }
 
-    /* Yorumlar Bölümü - GÜNCELLENDİ */
     .reviews-wrap { padding: 0 24px 24px; border-top: 1.5px solid var(--border); background: var(--card); }
     .rev-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); margin: 20px 0 12px; letter-spacing: .05em; }
     .review-card { background: var(--bg2); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid var(--border); }
     .rev-author { font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
     .rev-author span.rating { font-size: 11px; color: var(--tmdb); background: rgba(13, 148, 136, 0.1); padding: 2px 6px; border-radius: 4px; }
-    
-    /* Yorum metni artık kesilmiyor, scroll eklendi */
-    .rev-content { 
-      font-size: 13px; 
-      line-height: 1.6; 
-      color: var(--text); 
-      max-height: 150px; 
-      overflow-y: auto; 
-      padding-right: 5px;
-    }
-    
-    /* Scrollbar Tasarımı (Webkit tarayıcılar için) */
+    .rev-content { font-size: 13px; line-height: 1.6; color: var(--text); max-height: 150px; overflow-y: auto; padding-right: 5px; }
     .rev-content::-webkit-scrollbar { width: 4px; }
     .rev-content::-webkit-scrollbar-track { background: var(--border); border-radius: 4px; }
     .rev-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
@@ -151,7 +141,6 @@
     .err .icon { font-size:32px; margin-bottom:10px; }
     .tip { margin-top:32px; font-size:11px; color:#c8b090; letter-spacing:.1em; text-align:center; line-height:1.8; }
 
-    /* Modal (Açılır Pencere) CSS'i */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(42, 31, 20, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 20px; backdrop-filter: blur(3px); }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     .modal-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; display: flex; flex-direction: column; }
@@ -210,6 +199,49 @@ var timer = null;
 var selId = null;
 var selMt = null;
 
+// RASTGELE GİZLİ CEVHER BULMA ALGORİTMASI
+function loadRandomDiscovery() {
+  qEl.value = "";
+  toggleClearBtn();
+  hideDD();
+  btnEl.disabled = true;
+  resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Gizli bir cevher aranıyor...</span></div>';
+
+  // Karakter derinliği, psikolojik katmanlar ve gri alanların yoğun işlendiği sinema türleri
+  // Dram(18), Gizem(9648), Suç(80), Gerilim(53), Tarih(36)
+  var deepGenres = [18, 9648, 80, 53, 36];
+  var randomGenre = deepGenres[Math.floor(Math.random() * deepGenres.length)];
+  
+  // Aramayı genişletmek ve farklı sonuçlar almak için 1 ile 5 arası rastgele bir sayfa seçilir
+  var randomPage = Math.floor(Math.random() * 5) + 1;
+
+  var url = "https://api.themoviedb.org/3/discover/movie?api_key=" + TK + 
+            "&language=tr-TR" +
+            "&vote_average.gte=7.0" +
+            "&vote_count.gte=300" +
+            "&vote_count.lte=3000" +
+            "&with_genres=" + randomGenre + 
+            "&page=" + randomPage +
+            "&sort_by=popularity.desc"; // Bu baremdeki en popülerlerden başla
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.results && data.results.length > 0) {
+        var randomMovie = data.results[Math.floor(Math.random() * data.results.length)];
+        loadFilm(randomMovie.id, "movie", true);
+      } else {
+        resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🔍</div><div>Şu an için gizli bir cevher bulunamadı.</div></div></div>';
+      }
+    })
+    .catch(function() {
+      resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bağlantı hatası oluştu.</div></div></div>';
+    })
+    .finally(function() {
+      btnEl.disabled = false;
+    });
+}
+
 function toggleClearBtn() {
   clearBtn.style.display = qEl.value.length > 0 ? "block" : "none";
 }
@@ -222,12 +254,8 @@ clearBtn.addEventListener("click", function() {
 });
 
 siteTitle.addEventListener("click", function() {
-  qEl.value = "";
-  toggleClearBtn();
-  resEl.innerHTML = "";
-  hideDD();
-  selId = null;
-  selMt = null;
+  // Ana başlığa tıklandığında rastgele film yükle
+  loadRandomDiscovery();
 });
 
 btnEl.addEventListener("click", function() { doSearch(); });
@@ -284,15 +312,11 @@ modal.addEventListener("click", function(e) {
   }
 });
 
-// Çeviri fonksiyonu tamamen yenilendi - Data attribute üzerinden güvenli okuma
 window.translateText = function(btn) {
   var text = decodeURIComponent(btn.dataset.text);
-  
   openModal();
   modalContent.innerHTML = '<div class="modal-spinner"><div class="spinner"></div></div>';
-  
   var url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=" + encodeURIComponent(text);
-  
   fetch(url)
     .then(function(res) { return res.json(); })
     .then(function(data) {
@@ -350,169 +374,175 @@ function fetchDD(q) {
     .catch(function() { hideDD(); });
 }
 
+// Ana film yükleme fonksiyonu dışarı çıkarıldı, artık "Rastgele" veya "Arama" ile tetiklenebilir
+function loadFilm(id, mt, isRandom) {
+  var currentSearchVal = qEl.value.trim();
+  
+  Promise.all([
+    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids").then(function(r){return r.json()}),
+    fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "/reviews?api_key=" + TK).then(function(r){return r.json()})
+  ])
+  .then(function(results) {
+      var dd = results[0];
+      var revData = results[1];
+
+      var imdbId  = (dd.external_ids && dd.external_ids.imdb_id) || dd.imdb_id;
+      // Rastgele geldiyse kendi adını, aratılarak geldiyse q değerini referans al
+      var title   = dd.title || dd.name || currentSearchVal;
+      var year    = (dd.release_date || dd.first_air_date || "").slice(0, 4);
+      var type    = mt === "tv" ? "Dizi" : "Film";
+      var plot    = dd.overview || "";
+      var poster  = dd.poster_path ? "https://image.tmdb.org/t/p/w154" + dd.poster_path : null;
+      var genres  = (dd.genres || []).slice(0, 2).map(function(g) { return g.name; }).join(", ");
+      var trailer = (dd.videos && dd.videos.results || []).find(function(v) { return v.site === "YouTube" && v.type === "Trailer"; });
+      var trailerUrl = trailer ? "https://www.youtube.com/watch?v=" + trailer.key : null;
+      var tmdbScore  = dd.vote_average && dd.vote_count > 10 ? parseFloat(dd.vote_average.toFixed(1)) : null;
+
+      var rawTime = dd.runtime || (dd.episode_run_time && dd.episode_run_time.length > 0 ? dd.episode_run_time[0] : null);
+      var timeStr = "";
+      if (rawTime) {
+          var hours = Math.floor(rawTime / 60);
+          var mins = rawTime % 60;
+          timeStr = (hours > 0 ? hours + "s " : "") + mins + "dk";
+      }
+
+      var reviewsHtml = "";
+      if (revData.results && revData.results.length > 0) {
+          var topReviews = revData.results.slice(0, 5);
+          reviewsHtml = '<div class="reviews-wrap"><h3 class="rev-title">Öne Çıkan Yorumlar</h3>';
+          
+          topReviews.forEach(function(rev) {
+              var author = rev.author || "Anonim";
+              var ratingHtml = (rev.author_details && rev.author_details.rating) ? '<span class="rating">⭐ ' + rev.author_details.rating + '/10</span>' : '';
+              var content = rev.content || "";
+              var safeContent = encodeURIComponent(content);
+
+              reviewsHtml += '<div class="review-card">' +
+                               '<div class="rev-author">' + author + ratingHtml + '</div>' +
+                               '<div class="rev-content">' + content + '</div>' +
+                               '<button class="rev-translate-btn" data-text="' + safeContent + '" onclick="translateText(this)">' +
+                                 '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>' +
+                                 'Sitede Çevir' +
+                               '</button>' +
+                             '</div>';
+          });
+          reviewsHtml += '</div>';
+      }
+
+      function render(imdbScore, rtScore, metaScore) {
+        var iCls = imdbScore === null ? "na" : "imdb";
+        var rCls = rtScore   === null ? "na" : rtScore >= 60 ? "fresh" : "rotten";
+        var mCls = metaScore === null ? "na" : metaScore >= 61 ? "green" : metaScore >= 40 ? "yellow" : "red";
+        var tCls = tmdbScore === null ? "na" : "tmdb";
+        
+        var imdbLink = imdbId ? "https://www.imdb.com/title/" + imdbId + "/" : null;
+        var tmdbLink = "https://www.themoviedb.org/" + mt + "/" + dd.id;
+        var rtLink = "https://www.rottentomatoes.com/search?search=" + encodeURIComponent(title);
+        var metaLink = "https://www.metacritic.com/search/" + encodeURIComponent(title);
+
+        function bw(n, max) { return n === null ? 0 : Math.min(100, Math.round(n / max * 100)); }
+        
+        function sc(name, val, cls, w, sub, link) {
+          var content = '<span class="score-name">' + name + '</span><span class="score-num ' + cls + '">' + val + '</span><div class="bar"><div class="bar-fill ' + cls + '" data-w="' + w + '" style="width:0%"></div></div><span class="score-sub">' + sub + '</span>';
+          if (link && val !== "—") {
+            return '<a href="' + link + '" target="_blank" rel="noopener" class="score-cell">' + content + '</a>';
+          }
+          return '<div class="score-cell">' + content + '</div>';
+        }
+        
+        var totalWeight = 0;
+        var weightedSum = 0;
+        
+        if (metaScore !== null) { totalWeight += 35; weightedSum += metaScore * 35; }
+        if (imdbScore !== null) { totalWeight += 30; weightedSum += (imdbScore * 10) * 30; }
+        if (rtScore !== null)   { totalWeight += 20; weightedSum += rtScore * 20; }
+        if (tmdbScore !== null) { totalWeight += 15; weightedSum += (tmdbScore * 10) * 15; }
+        
+        var finalAvg = totalWeight > 0 ? weightedSum / totalWeight : null;
+        
+        var verd = null;
+        if (finalAvg !== null) {
+          if (finalAvg >= 90)      verd = {l:"Başyapıt", c:"masterpiece"};
+          else if (finalAvg >= 80) verd = {l:"Çok İyi", c:"v-good"};
+          else if (finalAvg >= 65) verd = {l:"İyi", c:"good"};
+          else if (finalAvg >= 55) verd = {l:"Ortalama", c:"avg"};
+          else if (finalAvg >= 45) verd = {l:"Zayıf", c:"weak"};
+          else                     verd = {l:"Çöp", c:"trash"};
+        }
+        
+        var avgHtml = '';
+        if (finalAvg !== null) {
+          avgHtml = '<div class="weighted-avg">' +
+            '<div class="wa-title">Ağırlıklı Ortalama Puan</div>' +
+            '<div class="wa-score">' + finalAvg.toFixed(1) + '<span> / 100</span></div>' +
+            '<div class="wa-weights">Metacritic (%35) · IMDb (%30) · Rotten T. (%20) · TMDb (%15)</div>' +
+          '</div>';
+        }
+
+        var shareText = '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nFilm Puanları uygulamasından incelendi.';
+        var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: shareText }));
+
+        var metaLine = [year, timeStr, type, genres].filter(Boolean).join(" · ");
+        
+        // Eğer film rastgele keşif ile geldiyse başlığın üstüne şık bir etiket bas
+        var randomBadgeHtml = isRandom ? '<div class="random-badge">Günün Keşfi 💎</div>' : '';
+
+        resEl.innerHTML = '<div class="card">' +
+          '<div class="card-head">' + 
+            '<div class="card-head-top">' +
+              (poster ? '<img class="poster" src="' + poster + '" alt="" />' : '<div class="poster-ph">🎬</div>') +
+              '<div class="head-info">' + randomBadgeHtml + '<div class="card-title">' + title + '</div><div class="card-meta">' + metaLine + '</div>' +
+                '<div class="actions-row">' +
+                  (trailerUrl ? '<a class="action-btn trailer-btn" href="' + trailerUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</a>' : '') +
+                  '<button class="action-btn share-btn" onclick="shareFilm(this)" data-share="' + shareDataStr + '"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          avgHtml +
+          '<div class="scores">' +
+            sc("IMDb",       imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10),   "/ 10", imdbLink) +
+            sc("TMDb",       tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10),  "/ 10", tmdbLink) +
+            sc("Rotten T.",  rtScore   !== null ? rtScore + "%" : "—",        rCls, bw(rtScore, 100),    "Tomatometer", rtLink) +
+            sc("Metacritic", metaScore !== null ? metaScore : "—",            mCls, bw(metaScore, 100),  "/ 100", metaLink) +
+          '</div>' +
+          '<div class="bottom">' + (verd ? '<div class="badge ' + verd.c + '">' + verd.l + '</div>' : '') + (plot ? '<p class="plot">' + plot + '</p>' : '') + '</div>' +
+          reviewsHtml +
+        '</div>';
+        
+        setTimeout(function() {
+          resEl.querySelectorAll(".bar-fill[data-w]").forEach(function(el) { el.style.width = el.dataset.w + "%"; });
+        }, 50);
+      }
+
+      if (imdbId) {
+        fetch("https://www.omdbapi.com/?i=" + imdbId + "&apikey=" + OK)
+          .then(function(r) { return r.json(); })
+          .then(function(od) {
+            var iScore = od.imdbRating && od.imdbRating !== "N/A" ? parseFloat(od.imdbRating) : tmdbScore;
+            var rtRaw  = (od.Ratings || []).find(function(r) { return r.Source === "Rotten Tomatoes"; });
+            var rScore = rtRaw ? parseInt(rtRaw.Value) : null;
+            var mScore = od.Metascore && od.Metascore !== "N/A" ? parseInt(od.Metascore) : null;
+            render(iScore, rScore, mScore);
+          })
+          .catch(function() { render(tmdbScore, null, null); });
+      } else {
+        render(tmdbScore, null, null);
+      }
+    })
+    .catch(function() {
+      resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bir hata oluştu.</div></div></div>';
+    });
+}
+
 function doSearch() {
   var q = qEl.value.trim();
   if (!q) return;
   btnEl.disabled = true; btnEl.textContent = "Aranıyor...";
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Yükleniyor...</span></div>';
 
-  function loadFilm(id, mt) {
-    Promise.all([
-      fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "?api_key=" + TK + "&language=tr-TR&append_to_response=videos,external_ids").then(function(r){return r.json()}),
-      fetch("https://api.themoviedb.org/3/" + mt + "/" + id + "/reviews?api_key=" + TK).then(function(r){return r.json()})
-    ])
-    .then(function(results) {
-        var dd = results[0];
-        var revData = results[1];
-
-        var imdbId  = (dd.external_ids && dd.external_ids.imdb_id) || dd.imdb_id;
-        var title   = dd.title || dd.name || q;
-        var year    = (dd.release_date || dd.first_air_date || "").slice(0, 4);
-        var type    = mt === "tv" ? "Dizi" : "Film";
-        var plot    = dd.overview || "";
-        var poster  = dd.poster_path ? "https://image.tmdb.org/t/p/w154" + dd.poster_path : null;
-        var genres  = (dd.genres || []).slice(0, 2).map(function(g) { return g.name; }).join(", ");
-        var trailer = (dd.videos && dd.videos.results || []).find(function(v) { return v.site === "YouTube" && v.type === "Trailer"; });
-        var trailerUrl = trailer ? "https://www.youtube.com/watch?v=" + trailer.key : null;
-        var tmdbScore  = dd.vote_average && dd.vote_count > 10 ? parseFloat(dd.vote_average.toFixed(1)) : null;
-
-        var rawTime = dd.runtime || (dd.episode_run_time && dd.episode_run_time.length > 0 ? dd.episode_run_time[0] : null);
-        var timeStr = "";
-        if (rawTime) {
-            var hours = Math.floor(rawTime / 60);
-            var mins = rawTime % 60;
-            timeStr = (hours > 0 ? hours + "s " : "") + mins + "dk";
-        }
-
-        var reviewsHtml = "";
-        if (revData.results && revData.results.length > 0) {
-            var topReviews = revData.results.slice(0, 5);
-            reviewsHtml = '<div class="reviews-wrap"><h3 class="rev-title">Öne Çıkan Yorumlar</h3>';
-            
-            topReviews.forEach(function(rev) {
-                var author = rev.author || "Anonim";
-                var ratingHtml = (rev.author_details && rev.author_details.rating) ? '<span class="rating">⭐ ' + rev.author_details.rating + '/10</span>' : '';
-                var content = rev.content || "";
-                
-                // Güvenli şifreleme - Kırılmaz yapı
-                var safeContent = encodeURIComponent(content);
-
-                reviewsHtml += '<div class="review-card">' +
-                                 '<div class="rev-author">' + author + ratingHtml + '</div>' +
-                                 '<div class="rev-content">' + content + '</div>' +
-                                 // Butona onclick ile string göndermek yerine parametre olarak "this" (butonun kendisi) gönderiliyor
-                                 '<button class="rev-translate-btn" data-text="' + safeContent + '" onclick="translateText(this)">' +
-                                   '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>' +
-                                   'Sitede Çevir' +
-                                 '</button>' +
-                               '</div>';
-            });
-            reviewsHtml += '</div>';
-        }
-
-        function render(imdbScore, rtScore, metaScore) {
-          var iCls = imdbScore === null ? "na" : "imdb";
-          var rCls = rtScore   === null ? "na" : rtScore >= 60 ? "fresh" : "rotten";
-          var mCls = metaScore === null ? "na" : metaScore >= 61 ? "green" : metaScore >= 40 ? "yellow" : "red";
-          var tCls = tmdbScore === null ? "na" : "tmdb";
-          
-          var imdbLink = imdbId ? "https://www.imdb.com/title/" + imdbId + "/" : null;
-          var tmdbLink = "https://www.themoviedb.org/" + mt + "/" + dd.id;
-          var rtLink = "https://www.rottentomatoes.com/search?search=" + encodeURIComponent(title);
-          var metaLink = "https://www.metacritic.com/search/" + encodeURIComponent(title);
-
-          function bw(n, max) { return n === null ? 0 : Math.min(100, Math.round(n / max * 100)); }
-          
-          function sc(name, val, cls, w, sub, link) {
-            var content = '<span class="score-name">' + name + '</span><span class="score-num ' + cls + '">' + val + '</span><div class="bar"><div class="bar-fill ' + cls + '" data-w="' + w + '" style="width:0%"></div></div><span class="score-sub">' + sub + '</span>';
-            if (link && val !== "—") {
-              return '<a href="' + link + '" target="_blank" rel="noopener" class="score-cell">' + content + '</a>';
-            }
-            return '<div class="score-cell">' + content + '</div>';
-          }
-          
-          var totalWeight = 0;
-          var weightedSum = 0;
-          
-          if (metaScore !== null) { totalWeight += 35; weightedSum += metaScore * 35; }
-          if (imdbScore !== null) { totalWeight += 30; weightedSum += (imdbScore * 10) * 30; }
-          if (rtScore !== null)   { totalWeight += 20; weightedSum += rtScore * 20; }
-          if (tmdbScore !== null) { totalWeight += 15; weightedSum += (tmdbScore * 10) * 15; }
-          
-          var finalAvg = totalWeight > 0 ? weightedSum / totalWeight : null;
-          
-          var verd = null;
-          if (finalAvg !== null) {
-            if (finalAvg >= 90)      verd = {l:"Başyapıt", c:"masterpiece"};
-            else if (finalAvg >= 80) verd = {l:"Çok İyi", c:"v-good"};
-            else if (finalAvg >= 65) verd = {l:"İyi", c:"good"};
-            else if (finalAvg >= 55) verd = {l:"Ortalama", c:"avg"};
-            else if (finalAvg >= 45) verd = {l:"Zayıf", c:"weak"};
-            else                     verd = {l:"Çöp", c:"trash"};
-          }
-          
-          var avgHtml = '';
-          if (finalAvg !== null) {
-            avgHtml = '<div class="weighted-avg">' +
-              '<div class="wa-title">Ağırlıklı Ortalama Puan</div>' +
-              '<div class="wa-score">' + finalAvg.toFixed(1) + '<span> / 100</span></div>' +
-              '<div class="wa-weights">Metacritic (%35) · IMDb (%30) · Rotten T. (%20) · TMDb (%15)</div>' +
-            '</div>';
-          }
-
-          var shareText = '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nFilm Puanları uygulamasından incelendi.';
-          var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: shareText }));
-
-          var metaLine = [year, timeStr, type, genres].filter(Boolean).join(" · ");
-
-          resEl.innerHTML = '<div class="card">' +
-            '<div class="card-head">' + (poster ? '<img class="poster" src="' + poster + '" alt="" />' : '<div class="poster-ph">🎬</div>') +
-              '<div class="head-info"><div class="card-title">' + title + '</div><div class="card-meta">' + metaLine + '</div>' +
-              
-              '<div class="actions-row">' +
-                (trailerUrl ? '<a class="action-btn trailer-btn" href="' + trailerUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</a>' : '') +
-                '<button class="action-btn share-btn" onclick="shareFilm(this)" data-share="' + shareDataStr + '"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>' +
-              '</div>' +
-
-            '</div></div>' +
-            avgHtml +
-            '<div class="scores">' +
-              sc("IMDb",       imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10),   "/ 10", imdbLink) +
-              sc("TMDb",       tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10),  "/ 10", tmdbLink) +
-              sc("Rotten T.",  rtScore   !== null ? rtScore + "%" : "—",        rCls, bw(rtScore, 100),    "Tomatometer", rtLink) +
-              sc("Metacritic", metaScore !== null ? metaScore : "—",            mCls, bw(metaScore, 100),  "/ 100", metaLink) +
-            '</div>' +
-            '<div class="bottom">' + (verd ? '<div class="badge ' + verd.c + '">' + verd.l + '</div>' : '') + (plot ? '<p class="plot">' + plot + '</p>' : '') + '</div>' +
-            reviewsHtml +
-          '</div>';
-          
-          setTimeout(function() {
-            resEl.querySelectorAll(".bar-fill[data-w]").forEach(function(el) { el.style.width = el.dataset.w + "%"; });
-          }, 50);
-        }
-
-        if (imdbId) {
-          fetch("https://www.omdbapi.com/?i=" + imdbId + "&apikey=" + OK)
-            .then(function(r) { return r.json(); })
-            .then(function(od) {
-              var iScore = od.imdbRating && od.imdbRating !== "N/A" ? parseFloat(od.imdbRating) : tmdbScore;
-              var rtRaw  = (od.Ratings || []).find(function(r) { return r.Source === "Rotten Tomatoes"; });
-              var rScore = rtRaw ? parseInt(rtRaw.Value) : null;
-              var mScore = od.Metascore && od.Metascore !== "N/A" ? parseInt(od.Metascore) : null;
-              render(iScore, rScore, mScore);
-            })
-            .catch(function() { render(tmdbScore, null, null); });
-        } else {
-          render(tmdbScore, null, null);
-        }
-      })
-      .catch(function() {
-        resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bir hata oluştu.</div></div></div>';
-      });
-  }
-
   if (selId && selMt) {
-    loadFilm(selId, selMt);
+    loadFilm(selId, selMt, false);
   } else {
     fetch("https://api.themoviedb.org/3/search/multi?api_key=" + TK + "&query=" + encodeURIComponent(q) + "&language=tr-TR")
       .then(function(r) { return r.json(); })
@@ -521,7 +551,7 @@ function doSearch() {
         if (!first) {
           resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">🎬</div><div>Film bulunamadı.</div><div style="font-size:12px;color:#b8a080;margin-top:6px">Farklı bir yazım deneyin.</div></div></div>';
         } else {
-          loadFilm(first.id, first.media_type);
+          loadFilm(first.id, first.media_type, false);
         }
       })
       .catch(function() {
@@ -530,6 +560,11 @@ function doSearch() {
   }
   btnEl.disabled = false; btnEl.textContent = "Ara";
 }
+
+// Site ilk yüklendiğinde rastgele bir gizli cevher getir
+window.addEventListener("DOMContentLoaded", function() {
+  loadRandomDiscovery();
+});
 </script>
 </body>
 </html>
