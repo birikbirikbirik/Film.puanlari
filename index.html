@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#f5ede0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -27,8 +27,8 @@
       --glow: rgba(229,101,50,.06);
     }
 
-    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; }
-    .app { flex: 1; display:flex; flex-direction:column; align-items:center; padding:20px 20px 0; position:relative; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; width:100vw; max-width:100vw; overflow-x:hidden; transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; }
+    .app { flex: 1; display:flex; flex-direction:column; align-items:center; padding:20px 20px 0; position:relative; width:100%; max-width:100vw; overflow-x:hidden; }
     .app::before { content:''; position:fixed; top:-150px; left:50%; transform:translateX(-50%); width:500px; height:500px; background:radial-gradient(circle,var(--glow),transparent 70%); pointer-events:none; transition: background 0.3s; }
     .content { position:relative; width:100%; max-width:560px; display:flex; flex-direction:column; align-items:center; flex: 1; }
     
@@ -76,36 +76,39 @@
     .clear-history-btn { display:block; width:100%; text-align:center; padding:12px; font-size:12px; color:#d42a08; background:var(--card); border:none; border-top:1px solid var(--border); cursor:pointer; font-weight:600; }
     .clear-history-btn:hover { background:var(--bg2); }
     
-    .card { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); transition: background 0.3s, border-color 0.3s; margin-bottom: 20px; }
+    .card { width:100%; max-width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; animation:fadeUp .35s ease; box-shadow:0 4px 20px var(--shadow); transition: background 0.3s, border-color 0.3s; margin-bottom: 20px; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
     
-    .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; }
+    .card-head { padding:22px 24px 18px; border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; width:100%; max-width:100%; box-sizing: border-box; }
     .card-head-top { display: flex; gap: 16px; align-items: flex-start; width: 100%; }
     
-    /* Afişi Sağlama Aldığımız Yer */
+    /* Afiş Garantörü */
     .poster { width:64px; min-width:64px; height:94px; object-fit:cover; border-radius:6px; flex-shrink:0; box-shadow:0 2px 8px var(--shadow); }
     .poster-ph { width:64px; min-width:64px; height:94px; background:var(--bg2); border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; }
-    .head-info { flex:1; min-width:0; }
+    .head-info { flex:1; min-width:0; } /* min-width:0 taşıp afişi ezmesini engeller */
     
-    /* GÜNCELLENMİŞ ETİKET ALANI (Bağımsız Tam Genişlik Satırı) */
-    .tags-container { 
-      display: flex; 
-      gap: 6px; 
-      margin-top: 16px; /* Afiş ve bilgilerden koptu, alta geçti */
-      margin-bottom: 6px; 
-      align-items: center; 
-      flex-wrap: nowrap; 
-      overflow-x: auto; 
-      -webkit-overflow-scrolling: touch; 
-      scrollbar-width: none; 
-      width: 100%; 
-      padding-bottom: 4px;
+    /* GÜNCELLENMİŞ ETİKET ALANI (Zırhlı Kaydırma Kapsülü) */
+    .tags-scroll-area {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        margin-top: 16px;
+        margin-bottom: 6px;
     }
-    .tags-container::-webkit-scrollbar { display: none; }
+    .tags-scroll-area::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    
+    .tags-container { 
+        display: flex; 
+        gap: 6px; 
+        align-items: center; 
+        width: max-content; /* İçeriği kadar genişler, kapsülü dışarı itmez */
+        padding-bottom: 4px;
+    }
     
     .tag-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; flex-shrink: 0; }
     
-    /* Etiket Renkleri */
     .tag-pill.random { background: var(--bg2); color: var(--accent); border: 1px solid var(--border); }
     .tag-pill.cinephile { background: rgba(13, 148, 136, 0.1); color: var(--tmdb); border: 1px solid rgba(13, 148, 136, 0.3); }
     .tag-pill.timeless { background: rgba(200, 150, 10, 0.1); color: var(--imdb); border: 1px solid rgba(200, 150, 10, 0.3); }
@@ -120,8 +123,8 @@
     .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; }
     .tag-info-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--muted); }
 
-    .card-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.05em; color:var(--text); margin-bottom:4px; line-height:1.1; }
-    .card-meta { font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:10px; line-height: 1.4; }
+    .card-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.05em; color:var(--text); margin-bottom:4px; line-height:1.1; word-wrap: break-word; }
+    .card-meta { font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:10px; line-height: 1.5; word-wrap: break-word; }
     
     .actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .action-btn { display:inline-flex; align-items:center; gap:6px; border:none; border-radius:6px; padding:6px 12px; font-size:12px; font-weight:500; cursor:pointer; text-decoration:none; transition:background .2s; -webkit-tap-highlight-color:transparent; font-family:'DM Sans',sans-serif; }
@@ -298,6 +301,22 @@ var selMt = null;
 var currentCastHtml = ""; 
 window.currentFilmReviews = [];
 window.currentReviewCount = 0;
+
+// Ülke Çeviri Sözlüğü (Destansı isimleri kısaltmak için)
+var countryMap = {
+    "United States of America": "ABD",
+    "United Kingdom": "İngiltere",
+    "France": "Fransa",
+    "Germany": "Almanya",
+    "Italy": "İtalya",
+    "Spain": "İspanya",
+    "Japan": "Japonya",
+    "South Korea": "Güney Kore",
+    "Russia": "Rusya",
+    "China": "Çin",
+    "India": "Hindistan",
+    "Brazil": "Brezilya"
+};
 
 // --- TEMA KONTROLÜ (DARK MODE) ---
 var currentTheme = localStorage.getItem('izlesemmi_theme') || 'light';
@@ -647,7 +666,9 @@ function loadFilm(id, mt, isRandom) {
       var plot    = dd.overview || "";
       var rawPoster = dd.poster_path ? "https://image.tmdb.org/t/p/w154" + dd.poster_path : null;
       var genres  = (dd.genres || []).slice(0, 2).map(function(g) { return g.name; }).join(", ");
-      var country = (dd.production_countries && dd.production_countries.length > 0) ? dd.production_countries[0].name : "";
+      
+      var rawCountry = (dd.production_countries && dd.production_countries.length > 0) ? dd.production_countries[0].name : "";
+      var country = countryMap[rawCountry] || rawCountry; // Çeviri Sözlüğünü Kullan
 
       var videos = dd.videos && dd.videos.results ? dd.videos.results : [];
       var trailer = videos.find(function(v) { return v.site === "YouTube" && v.type === "Trailer"; }) || videos.find(function(v) { return v.site === "YouTube"; });
@@ -796,13 +817,12 @@ function loadFilm(id, mt, isRandom) {
         var imdbBtnHtml = imdbLink ? '<a class="action-btn imdb-btn" href="' + imdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>' : '';
         var tmdbBtnHtml = tmdbLink ? '<a class="action-btn tmdb-btn" href="' + tmdbLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>' : '';
 
-        // TAGES KUTUSUNU OLUŞTURUYORUZ (Eğer boşsa hiç ekleme)
         var tagsContainerHtml = '';
         if (tagsHtml !== '') {
             tagsHtml += '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button>';
-            tagsContainerHtml = '<div class="tags-container" id="tags-container-' + id + '">' + tagsHtml + '</div>';
+            tagsContainerHtml = '<div class="tags-scroll-area"><div class="tags-container" id="tags-container-' + id + '">' + tagsHtml + '</div></div>';
         } else {
-            tagsContainerHtml = '<div class="tags-container" id="tags-container-' + id + '"></div>';
+            tagsContainerHtml = '<div class="tags-scroll-area"><div class="tags-container" id="tags-container-' + id + '"></div></div>';
         }
 
         resEl.innerHTML = '<div class="card">' +
