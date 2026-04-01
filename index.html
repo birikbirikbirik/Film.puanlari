@@ -269,7 +269,7 @@
     <div class="search-wrap">
       <div class="search-row">
         <div class="search-input-wrap">
-          <input id="q" type="text" placeholder="Film veya dizi adı..." autocomplete="off" />
+          <input id="q" type="text" name="search_query" placeholder="Film veya dizi adı..." autocomplete="off" spellcheck="false" />
           <button id="clear-btn" class="clear-btn">&times;</button>
         </div>
         <button id="btn" class="search-btn">Ara</button>
@@ -311,9 +311,11 @@
       <button class="modal-close" onclick="closeAuthModal()">&times;</button>
     </div>
     <div class="modal-body" id="auth-body-unlogged">
-       <input type="email" id="auth-email" class="auth-input" placeholder="E-posta adresi">
-       <input type="password" id="auth-pass" class="auth-input" placeholder="Şifre">
-       <button id="auth-submit-btn" class="search-btn" style="width:100%;" onclick="handleAuthSubmit()">Giriş Yap</button>
+       <form onsubmit="event.preventDefault(); handleAuthSubmit();" style="width:100%;">
+           <input type="email" id="auth-email" name="email" class="auth-input" autocomplete="username" placeholder="E-posta adresi" required>
+           <input type="password" id="auth-pass" name="password" class="auth-input" autocomplete="current-password" placeholder="Şifre" required>
+           <button type="submit" id="auth-submit-btn" class="search-btn" style="width:100%;">Giriş Yap</button>
+       </form>
        <div id="auth-error" class="auth-error">Hata mesajı</div>
        <div class="auth-switch">
          Hesabın yok mu? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Kaydol</span>
