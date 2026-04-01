@@ -114,6 +114,12 @@
     .actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .action-btn { display:inline-flex; align-items:center; gap:6px; border:none; border-radius:6px; padding:6px 12px; font-size:12px; font-weight:500; cursor:pointer; text-decoration:none; transition:background .2s; -webkit-tap-highlight-color:transparent; font-family:'DM Sans',sans-serif; }
     .action-btn svg { width:12px; height:12px; }
+    
+    /* İZLEME LİSTESİ BUTON STİLLERİ */
+    .action-btn.wl-btn { background: var(--bg2); color: var(--text); border: 1.5px solid var(--border); }
+    .action-btn.wl-btn:hover { border-color: var(--meta-green); color: var(--meta-green); }
+    .action-btn.wl-btn.added { background: rgba(74, 144, 48, 0.1); color: var(--meta-green); border-color: var(--meta-green); }
+
     .action-btn.trailer-btn { background:#e02020; color:#fff; }
     .action-btn.trailer-btn:hover { background:#c00; }
     .action-btn.share-btn { background:var(--bg2); color:var(--text); }
@@ -197,6 +203,23 @@
     .rec-card:hover { transform: scale(1.02); }
     .rec-card img { width: 100%; aspect-ratio: 2/3; display: block; object-fit: cover; }
     .rec-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 24px 8px 10px; font-size: 11px; font-weight: 500; text-align: center; line-height: 1.3; }
+
+    /* İZLEME LİSTESİ (GRID) STİLLERİ */
+    .wl-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; padding: 0 4px; }
+    .wl-title { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--text); letter-spacing:.05em; line-height:1; }
+    .wl-sort-group { display: flex; gap: 6px; }
+    .wl-sort-btn { background: var(--card); border: 1.5px solid var(--border); color: var(--text); padding: 8px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+    .wl-sort-btn.active { background: rgba(184, 74, 26, 0.1); color: var(--accent); border-color: var(--accent); }
+    .wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 16px; width: 100%; }
+    .wl-card-grid { position: relative; background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .wl-card-grid:hover { transform: translateY(-3px); box-shadow: 0 6px 15px var(--shadow); border-color: var(--accent); }
+    .wl-poster-grid { width: 100%; aspect-ratio: 2/3; object-fit: cover; background: var(--bg2); border-bottom: 1.5px solid var(--border); }
+    .wl-info-grid { padding: 10px 8px; flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .wl-card-title { font-size: 12px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; color: var(--text); }
+    .wl-card-year { font-size: 10px; font-weight: 500; color: var(--muted); }
+    .wl-remove-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(2px); transition: background 0.2s; z-index: 2; line-height: 1; padding-bottom: 2px;}
+    .wl-remove-btn:hover { background: var(--meta-red); }
+    .wl-score-badge { position: absolute; top: 6px; left: 6px; background: rgba(184, 74, 26, 0.95); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3);}
 
     .loading { display:flex; flex-direction:column; align-items:center; gap:14px; padding:44px 0; color:var(--muted); font-size:13px; letter-spacing:.1em; }
     .spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
@@ -298,7 +321,13 @@
     </div>
     <div class="modal-body" id="auth-body-logged" style="display:none; text-align:center;">
        <div style="font-size:15px; margin-bottom:10px;">Hoş geldin,</div>
-       <div id="auth-user-email" style="font-weight:bold; color:var(--accent); margin-bottom:20px;">-</div>
+       <div id="auth-user-email" style="font-weight:bold; color:var(--accent); margin-bottom:24px;">-</div>
+       
+       <button class="search-btn" style="width:100%; margin-bottom:12px; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="fetchWatchlist()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          İzleme Listem
+       </button>
+       
        <button class="search-btn" style="width:100%; background:var(--bg2); color:var(--meta-red); border:1px solid var(--meta-red);" onclick="handleLogout()">Çıkış Yap</button>
     </div>
   </div>
@@ -306,7 +335,7 @@
 
 <script>
 // ==========================================
-// 1. ADIM: FIREBASE ŞİFRELERİ (EKLENDİ)
+// 1. FIREBASE BAŞLATMA
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAOXiu1-qfdg6oYf2xt8xFO9wdV21IqP60",
@@ -317,18 +346,18 @@ const firebaseConfig = {
   appId: "1:498958427347:web:538638b49f7a05a8b6a026"
 };
 
-// Firebase'i Başlat
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 // ==========================================
-// 2. ÜYELİK SİSTEMİ MANTIĞI (AUTH)
+// 2. ÜYELİK VE İZLEME LİSTESİ MANTIĞI
 // ==========================================
 let isLoginMode = true; 
 let currentUser = null;
+window.myWatchlist = [];
+window.currentSort = 'date_desc';
 
-// Sistemin kullanıcının girip girmediğini dinlediği yer
 auth.onAuthStateChanged(function(user) {
   if (user) {
     currentUser = user;
@@ -359,19 +388,16 @@ function closeAuthModal() {
   document.body.style.overflow = "";
 }
 
-// Modal dışına tıklayınca kapatma
 document.getElementById("auth-modal").addEventListener("click", function(e) {
   if (e.target === this) closeAuthModal();
 });
 
-// Kaydol/Giriş Yap arası geçiş
 function toggleAuthMode() {
   isLoginMode = !isLoginMode;
   document.getElementById("auth-error").style.display = "none";
   if (isLoginMode) {
     document.getElementById("auth-title").innerText = "Giriş Yap";
     document.getElementById("auth-submit-btn").innerText = "Giriş Yap";
-    document.getElementById("auth-toggle-btn").innerHTML = "Kaydol";
     document.querySelector(".auth-switch").innerHTML = 'Hesabın yok mu? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Kaydol</span>';
   } else {
     document.getElementById("auth-title").innerText = "Yeni Hesap Oluştur";
@@ -380,78 +406,138 @@ function toggleAuthMode() {
   }
 }
 
-// Form Gönderildiğinde
 function handleAuthSubmit() {
   const email = document.getElementById("auth-email").value.trim();
   const pass = document.getElementById("auth-pass").value.trim();
   const errDiv = document.getElementById("auth-error");
   const btn = document.getElementById("auth-submit-btn");
 
-  if (!email || !pass) {
-    errDiv.innerText = "Lütfen e-posta ve şifrenizi girin.";
-    errDiv.style.display = "block";
-    return;
-  }
+  if (!email || !pass) { errDiv.innerText = "Lütfen e-posta ve şifrenizi girin."; errDiv.style.display = "block"; return; }
 
   errDiv.style.display = "none";
   btn.disabled = true;
   btn.innerText = "Bekleyin...";
 
   if (isLoginMode) {
-    // GİRİŞ YAP
-    auth.signInWithEmailAndPassword(email, pass)
-      .then(() => {
-        closeAuthModal();
-      })
-      .catch((error) => {
+    auth.signInWithEmailAndPassword(email, pass).then(() => { closeAuthModal(); }).catch((error) => {
         errDiv.style.display = "block";
-        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            errDiv.innerText = "E-posta veya şifre hatalı.";
-        } else {
-            errDiv.innerText = "Bir hata oluştu. Tekrar deneyin.";
-        }
-      })
-      .finally(() => {
-        btn.disabled = false;
-        btn.innerText = "Giriş Yap";
-      });
+        errDiv.innerText = (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') ? "E-posta veya şifre hatalı." : "Bir hata oluştu. Tekrar deneyin.";
+      }).finally(() => { btn.disabled = false; btn.innerText = "Giriş Yap"; });
   } else {
-    // KAYIT OL VE VERİTABANINA EKLE
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then((userCredential) => {
-        // Zihin/Eşleşme analizi için veritabanında kullanıcının dosyasını oluştur
-        return db.collection("users").doc(userCredential.user.uid).set({
-          email: email,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          matchProfile: null // İleride burayı dolduracağız
-        });
-      })
-      .then(() => {
-        closeAuthModal();
-      })
-      .catch((error) => {
+    auth.createUserWithEmailAndPassword(email, pass).then((userCredential) => {
+        return db.collection("users").doc(userCredential.user.uid).set({ email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), matchProfile: null });
+      }).then(() => { closeAuthModal(); }).catch((error) => {
         errDiv.style.display = "block";
-        if (error.code === 'auth/email-already-in-use') {
-          errDiv.innerText = "Bu e-posta adresi zaten kullanımda.";
-        } else if (error.code === 'auth/weak-password') {
-          errDiv.innerText = "Şifre en az 6 karakter olmalıdır.";
-        } else {
-          errDiv.innerText = "Kayıt olurken bir hata oluştu.";
-        }
-      })
-      .finally(() => {
-        btn.disabled = false;
-        btn.innerText = "Kayıt Ol";
-      });
+        if (error.code === 'auth/email-already-in-use') errDiv.innerText = "Bu e-posta adresi zaten kullanımda.";
+        else if (error.code === 'auth/weak-password') errDiv.innerText = "Şifre en az 6 karakter olmalıdır.";
+        else errDiv.innerText = "Kayıt olurken bir hata oluştu.";
+      }).finally(() => { btn.disabled = false; btn.innerText = "Kayıt Ol"; });
   }
 }
 
-function handleLogout() {
-  auth.signOut().then(() => {
-    closeAuthModal();
-  });
-}
+function handleLogout() { auth.signOut().then(() => { closeAuthModal(); }); }
 
+// LİSTEYİ GETİR VE ÇİZ
+window.fetchWatchlist = function() {
+    closeAuthModal();
+    qEl.value = ""; toggleClearBtn(); hideDD();
+    if (!currentUser) return;
+    
+    resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
+    
+    db.collection("users").doc(currentUser.uid).collection("watchlist").get().then(snap => {
+        window.myWatchlist = [];
+        snap.forEach(doc => { window.myWatchlist.push(doc.data()); });
+        renderWatchlistUI(window.currentSort);
+    }).catch(err => {
+        resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Liste yüklenirken hata oluştu.</div></div></div>';
+    });
+};
+
+window.renderWatchlistUI = function(sortType) {
+    window.currentSort = sortType;
+    if (window.myWatchlist.length === 0) {
+        resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">👻</div><div>İzleme listeniz henüz boş.<br><br>Konfor alanınızdan çıkıp yeni şeyler keşfedin.</div></div></div>';
+        return;
+    }
+
+    let sorted = [...window.myWatchlist];
+    if (sortType === 'date_desc') sorted.sort((a,b) => (b.addedAt?.seconds || 0) - (a.addedAt?.seconds || 0));
+    if (sortType === 'date_asc') sorted.sort((a,b) => (a.addedAt?.seconds || 0) - (b.addedAt?.seconds || 0));
+    if (sortType === 'score_desc') sorted.sort((a,b) => (b.score || 0) - (a.score || 0));
+    if (sortType === 'score_asc') sorted.sort((a,b) => (a.score || 0) - (b.score || 0));
+
+    let html = `
+        <div style="width: 100%;">
+            <div class="wl-header">
+                <div class="wl-title">İzleme Listem (${sorted.length})</div>
+                <div class="wl-sort-group">
+                    <button class="wl-sort-btn ${sortType.includes('date') ? 'active' : ''}" onclick="renderWatchlistUI(window.currentSort === 'date_desc' ? 'date_asc' : 'date_desc')">
+                        Zaman ${sortType === 'date_asc' ? '▲' : '▼'}
+                    </button>
+                    <button class="wl-sort-btn ${sortType.includes('score') ? 'active' : ''}" onclick="renderWatchlistUI(window.currentSort === 'score_desc' ? 'score_asc' : 'score_desc')">
+                        Puan ${sortType === 'score_asc' ? '▲' : '▼'}
+                    </button>
+                </div>
+            </div>
+            <div class="wl-grid">
+    `;
+
+    sorted.forEach(item => {
+        let posterSrc = item.poster && item.poster !== 'null' ? item.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="150" style="background:%23ede0ce"></svg>';
+        let scoreBadge = item.score ? `<div class="wl-score-badge">${parseFloat(item.score).toFixed(1)}</div>` : '';
+        html += `
+            <div class="wl-card-grid" onclick="loadFilm(${item.id}, '${item.mt}', false); window.scrollTo({top:0, behavior:'smooth'});">
+                ${scoreBadge}
+                <button class="wl-remove-btn" onclick="event.stopPropagation(); removeFromWatchlist(${item.id})">&times;</button>
+                <img class="wl-poster-grid" src="${posterSrc}" loading="lazy" />
+                <div class="wl-info-grid">
+                    <div class="wl-card-title">${item.title}</div>
+                    <div class="wl-card-year">${item.year || ''}</div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div></div>`;
+    resEl.innerHTML = html;
+};
+
+// LİSTEDEN ÇIKAR (GRID EKRANI İÇİN)
+window.removeFromWatchlist = function(id) {
+    if (!currentUser) return;
+    window.myWatchlist = window.myWatchlist.filter(item => item.id != id);
+    renderWatchlistUI(window.currentSort);
+    db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).delete().catch(()=>{});
+};
+
+// LİSTEYE EKLE / ÇIKAR (FİLM DETAY EKRANI İÇİN)
+window.handleWatchlistBtn = function(btn) {
+    if (!currentUser) { openAuthModal(); return; }
+    
+    let id = btn.dataset.id;
+    let mt = btn.dataset.mt;
+    let title = decodeURIComponent(btn.dataset.title);
+    let year = btn.dataset.year;
+    let poster = btn.dataset.poster;
+    let score = btn.dataset.score === "null" ? null : parseFloat(btn.dataset.score);
+
+    let isAdded = btn.classList.contains('added');
+    let docRef = db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString());
+
+    if (isAdded) {
+        btn.classList.remove('added');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> Listeye Ekle';
+        docRef.delete();
+    } else {
+        btn.classList.add('added');
+        btn.innerHTML = '✓ Listemde';
+        docRef.set({
+            id: id, mt: mt, title: title, year: year, poster: poster, score: score,
+            addedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    }
+};
 
 // ==========================================
 // 3. FİLM ARAMA VE SİTE MANTIĞI
@@ -473,27 +559,13 @@ var currentCastHtml = "";
 window.currentFilmReviews = [];
 window.currentReviewCount = 0;
 
-var countryMap = {
-    "United States of America": "ABD", "United Kingdom": "İngiltere", "France": "Fransa",
-    "Germany": "Almanya", "Italy": "İtalya", "Spain": "İspanya", "Japan": "Japonya",
-    "South Korea": "Güney Kore", "Russia": "Rusya", "China": "Çin", "India": "Hindistan", "Brazil": "Brezilya"
-};
+var countryMap = { "United States of America": "ABD", "United Kingdom": "İngiltere", "France": "Fransa", "Germany": "Almanya", "Italy": "İtalya", "Spain": "İspanya", "Japan": "Japonya", "South Korea": "Güney Kore", "Russia": "Rusya", "China": "Çin", "India": "Hindistan", "Brazil": "Brezilya" };
 
 var currentTheme = localStorage.getItem('izlesemmi_theme') || 'light';
-if (currentTheme === 'dark') {
-  document.body.setAttribute('data-theme', 'dark');
-  themeToggle.innerText = '☀️ Açık Tema';
-}
+if (currentTheme === 'dark') { document.body.setAttribute('data-theme', 'dark'); themeToggle.innerText = '☀️ Açık Tema'; }
 themeToggle.addEventListener('click', function() {
-  if (document.body.getAttribute('data-theme') === 'dark') {
-    document.body.removeAttribute('data-theme');
-    localStorage.setItem('izlesemmi_theme', 'light');
-    themeToggle.innerText = '🌙 Koyu Tema';
-  } else {
-    document.body.setAttribute('data-theme', 'dark');
-    localStorage.setItem('izlesemmi_theme', 'dark');
-    themeToggle.innerText = '☀️ Açık Tema';
-  }
+  if (document.body.getAttribute('data-theme') === 'dark') { document.body.removeAttribute('data-theme'); localStorage.setItem('izlesemmi_theme', 'light'); themeToggle.innerText = '🌙 Koyu Tema'; } 
+  else { document.body.setAttribute('data-theme', 'dark'); localStorage.setItem('izlesemmi_theme', 'dark'); themeToggle.innerText = '☀️ Açık Tema'; }
 });
 
 window.showTagInfoModal = function() {
@@ -514,83 +586,51 @@ window.showTagInfoModal = function() {
     openGenericModal('Etiket Sözlüğü', infoHtml);
 };
 
-function getSearchHistory() {
-  var hist = localStorage.getItem('izlesemmi_history');
-  return hist ? JSON.parse(hist) : [];
-}
+function getSearchHistory() { var hist = localStorage.getItem('izlesemmi_history'); return hist ? JSON.parse(hist) : []; }
 function saveSearchToHistory(query) {
   if (!query || query.trim().length < 2) return;
-  var q = query.trim();
-  var hist = getSearchHistory();
+  var q = query.trim(); var hist = getSearchHistory();
   hist = hist.filter(function(item) { return item.toLowerCase() !== q.toLowerCase(); });
   hist.unshift(q); 
   if (hist.length > 3) hist = hist.slice(0, 3); 
   localStorage.setItem('izlesemmi_history', JSON.stringify(hist));
 }
-function clearSearchHistory() {
-  localStorage.removeItem('izlesemmi_history');
-  hideDD();
-  qEl.focus();
-}
+function clearSearchHistory() { localStorage.removeItem('izlesemmi_history'); hideDD(); qEl.focus(); }
 function showHistoryDD() {
   var hist = getSearchHistory();
   if (hist.length === 0) { hideDD(); return; }
-  
   ddEl.innerHTML = "";
   hist.forEach(function(item) {
-    var el = document.createElement("div");
-    el.className = "history-item";
+    var el = document.createElement("div"); el.className = "history-item";
     el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' + item;
-    el.addEventListener("click", function() {
-      qEl.value = item;
-      toggleClearBtn();
-      hideDD();
-      doSearch();
-    });
+    el.addEventListener("click", function() { qEl.value = item; toggleClearBtn(); hideDD(); doSearch(); });
     ddEl.appendChild(el);
   });
-  
-  var clearBtnEl = document.createElement("button");
-  clearBtnEl.className = "clear-history-btn";
-  clearBtnEl.innerText = "Geçmişi Temizle";
-  clearBtnEl.addEventListener("click", function(e) {
-    e.stopPropagation();
-    clearSearchHistory();
-  });
-  ddEl.appendChild(clearBtnEl);
-  
-  ddEl.style.display = "block";
+  var clearBtnEl = document.createElement("button"); clearBtnEl.className = "clear-history-btn"; clearBtnEl.innerText = "Geçmişi Temizle";
+  clearBtnEl.addEventListener("click", function(e) { e.stopPropagation(); clearSearchHistory(); });
+  ddEl.appendChild(clearBtnEl); ddEl.style.display = "block";
 }
 
 qEl.addEventListener("focus", function() { if (qEl.value.trim().length === 0) showHistoryDD(); });
 
 function openGenericModal(title, contentHTML) {
-  document.getElementById("generic-modal-title").innerText = title;
-  document.getElementById("generic-modal-content").innerHTML = contentHTML;
-  document.getElementById("generic-modal").classList.add("active");
-  document.body.style.overflow = "hidden";
+  document.getElementById("generic-modal-title").innerText = title; document.getElementById("generic-modal-content").innerHTML = contentHTML;
+  document.getElementById("generic-modal").classList.add("active"); document.body.style.overflow = "hidden";
 }
-function closeGenericModal() {
-  document.getElementById("generic-modal").classList.remove("active");
-  document.body.style.overflow = "";
-}
+function closeGenericModal() { document.getElementById("generic-modal").classList.remove("active"); document.body.style.overflow = ""; }
 document.getElementById("generic-modal").addEventListener("click", function(e) { if (e.target === this) closeGenericModal(); });
 
 function openTrailerModal(key) {
   document.getElementById("trailer-modal-content").innerHTML = '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + key + '?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
-  document.getElementById("trailer-modal").classList.add("active");
-  document.body.style.overflow = "hidden";
+  document.getElementById("trailer-modal").classList.add("active"); document.body.style.overflow = "hidden";
 }
 function closeTrailerModal() {
-  document.getElementById("trailer-modal").classList.remove("active");
-  document.getElementById("trailer-modal-content").innerHTML = ''; 
-  document.body.style.overflow = "";
+  document.getElementById("trailer-modal").classList.remove("active"); document.getElementById("trailer-modal-content").innerHTML = ''; document.body.style.overflow = "";
 }
 document.getElementById("trailer-modal").addEventListener("click", function(e) { if (e.target === this) closeTrailerModal(); });
 
 function loadComfortZoneDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD();
-  btnEl.disabled = true; comfortBtn.disabled = true;
+  qEl.value = ""; toggleClearBtn(); hideDD(); btnEl.disabled = true; comfortBtn.disabled = true;
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Zihinsel efor talep eden bir film aranıyor...</span></div>';
 
   var realKwIds = "2504|5695|6075|27933|4344"; 
@@ -630,8 +670,7 @@ function loadComfortZoneDiscovery() {
 }
 
 function loadRandomDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD();
-  btnEl.disabled = true;
+  qEl.value = ""; toggleClearBtn(); hideDD(); btnEl.disabled = true;
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Gizli bir cevher aranıyor...</span></div>';
 
   var deepGenres = [18, 9648, 80, 53, 36];
@@ -861,11 +900,19 @@ window.loadFilm = function(id, mt, isRandom) {
         var shareDataStr = encodeURIComponent(JSON.stringify({ title: title, text: '🎬 ' + title + ' (' + (year || '') + ')\n⭐ Ağırlıklı Puan: ' + (finalAvg ? finalAvg.toFixed(1) : 'Yok') + '/100\nİzlesem mi? uygulamasından incelendi.' }));
         var metaLine = [year, country, timeStr, type, genres].filter(Boolean).join(" · ");
 
+        // YENİ EKLENEN İZLEME LİSTESİ BUTONU (WL-BTN)
+        var wlBtnHtml = '<button id="wl-btn-' + id + '" class="action-btn wl-btn" ' +
+          'data-id="' + id + '" data-mt="' + mt + '" data-title="' + encodeURIComponent(title) + '" ' +
+          'data-year="' + year + '" data-poster="' + rawPoster + '" data-score="' + finalAvg + '" ' +
+          'onclick="handleWatchlistBtn(this)">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> Listeye Ekle</button>';
+
         resEl.innerHTML = '<div class="card"><div class="card-head"><div class="card-head-top">' +
           (rawPoster ? '<img class="poster" src="' + rawPoster + '" alt="" />' : '<div class="poster-ph">🎬</div>') +
           '<div class="head-info"><div class="card-title">' + title + '</div><div class="card-meta">' + metaLine + '</div></div></div>' +
           tagsContainerHtml +
           '<div class="actions-row">' +
+            wlBtnHtml +
             (trailer ? '<button class="action-btn trailer-btn" onclick="openTrailerModal(\'' + trailer.key + '\')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>' : '') +
             '<button class="action-btn share-btn" onclick="shareFilm(this)" data-share="' + shareDataStr + '"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>' +
           '</div><div class="outbound-links-row">' +
@@ -876,6 +923,7 @@ window.loadFilm = function(id, mt, isRandom) {
           avgHtml + '<div class="scores">' + sc("IMDb", imdbScore !== null ? imdbScore.toFixed(1) : "—", iCls, bw(imdbScore, 10), "/ 10") + sc("TMDb", tmdbScore !== null ? tmdbScore.toFixed(1) : "—", tCls, bw(tmdbScore, 10), "/ 10") + sc("Rotten T.", rtScore !== null ? rtScore + "%" : "—", rCls, bw(rtScore, 100), "Tomatometer") + sc("Metacritic", metaScore !== null ? metaScore : "—", mCls, bw(metaScore, 100), "/ 100") + '</div>' +
           '<div class="bottom">' + (verd ? '<div class="badge ' + verd.c + '">' + verd.l + '</div>' : '') + (plot ? '<p class="plot">' + plot + '</p>' : '') + '</div>' + reviewsHtml + recsHtml + '</div>';
         
+        // EKRAN ÇİZİLDİKTEN SONRA BUTONUN DURUMUNU (EKLi Mİ?) KONTROL ET
         setTimeout(function() {
           resEl.querySelectorAll(".bar-fill[data-w]").forEach(function(el) { el.style.width = el.dataset.w + "%"; });
           var kBtn = document.getElementById("kadro-btn-trigger");
@@ -888,6 +936,15 @@ window.loadFilm = function(id, mt, isRandom) {
                   window.currentReviewCount += 5;
                   if (window.currentReviewCount >= window.currentFilmReviews.length) loadMoreBtn.style.display = "none";
               });
+          }
+          
+          if (currentUser) {
+              db.collection("users").doc(currentUser.uid).collection("watchlist").doc(id.toString()).get().then(function(doc) {
+                  if(doc.exists) {
+                      var btn = document.getElementById("wl-btn-" + id);
+                      if(btn) { btn.classList.add('added'); btn.innerHTML = '✓ Listemde'; }
+                  }
+              }).catch(function(){});
           }
         }, 50);
 
