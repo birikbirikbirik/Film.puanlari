@@ -180,7 +180,9 @@
     .badge.avg         { background: rgba(200, 144, 16, 0.10); color: var(--meta-yellow); }
     .badge.weak        { background: rgba(192, 48, 48, 0.08);  color: var(--meta-red); }
     .badge.trash       { background: rgba(0, 0, 0, 0.08);      color: #666; }
-    .badge.match       { background: var(--tmdb); color: #fff; font-size:12px; letter-spacing: .05em; padding: 6px 14px; box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3); border: 1px solid rgba(255,255,255,0.2);}
+    
+    /* YÜKSELTİLMİŞ EŞLEŞME ROZETİ */
+    .badge.match       { background: var(--tmdb); color: #fff; font-size:13px; font-weight: 600; letter-spacing: .05em; padding: 8px 16px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3); border: 1px solid rgba(255,255,255,0.2);}
     
     .plot { font-size:13.5px; line-height:1.7; color:var(--text); opacity:0.9; }
 
@@ -250,12 +252,17 @@
     .auth-switch span:hover { text-decoration: underline; }
 
     .test-card { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
-    .test-q { font-size: 13px; font-weight: 500; margin-bottom: 10px; line-height: 1.5; color: var(--text); }
+    .test-q { font-size: 13px; font-weight: 600; margin-bottom: 10px; line-height: 1.5; color: var(--text); }
     .test-opts { display: flex; gap: 8px; }
     .opt-btn { flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; background: var(--bg2); color: var(--muted); transition: 0.2s; font-family: 'DM Sans', sans-serif;}
     .opt-btn.active[data-val="yes"] { background: var(--tmdb); color: #fff; border-color: var(--tmdb); }
     .opt-btn.active[data-val="meh"] { background: var(--meta-yellow); color: #fff; border-color: var(--meta-yellow); }
     .opt-btn.active[data-val="no"] { background: var(--meta-red); color: #fff; border-color: var(--meta-red); }
+
+    /* YENİ TÜR HAPLARI (PILLS) STİLLERİ */
+    .genre-pill { padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; background: var(--bg2); color: var(--muted); transition: 0.2s; user-select: none; }
+    .genre-pill.loved { background: var(--tmdb); color: #fff; border-color: var(--tmdb); }
+    .genre-pill.hated { background: var(--meta-red); color: #fff; border-color: var(--meta-red); }
 
     .site-footer { margin-top: auto; padding: 30px 0 10px; text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; opacity: 0.7; font-family: 'DM Sans', sans-serif; width: 100%; }
   </style>
@@ -311,7 +318,7 @@
 </div>
 
 <div id="auth-modal" class="modal-overlay">
-  <div class="modal-box" style="max-width: 420px;">
+  <div class="modal-box" style="max-width: 450px;">
     <div class="modal-header">
       <div id="auth-title" class="modal-title">Giriş Yap</div>
       <button class="modal-close" onclick="closeAuthModal()">&times;</button>
@@ -344,9 +351,19 @@
 
        <div id="mind-test-area" style="display:none; margin-top:24px; border-top:1.5px solid var(--border); padding-top:20px;">
          <h3 style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:15px; text-align:center;">Sinematik Zihin Testi</h3>
-         <p style="font-size:12px; color:var(--muted); text-align:center; margin-bottom:20px; line-height:1.5;">Bu test, algoritmanın size en doğru eşleşme puanını sunabilmesi için özel olarak tasarlanmıştır.</p>
+         <p style="font-size:12px; color:var(--muted); text-align:center; margin-bottom:24px; line-height:1.5;">Bu test, algoritmanın size dürüst bir eşleşme puanı sunabilmesi için özel olarak tasarlanmıştır.</p>
+         
+         <div class="test-card">
+           <div class="test-q" style="color:var(--tmdb);">Özellikle Sevdiğim Türler (Eşleşmeyi Zirveye Taşır)</div>
+           <div id="loved-genres-container" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+         </div>
+         <div class="test-card">
+           <div class="test-q" style="color:var(--meta-red);">Asla Katlanamadığım Türler (Eşleşmeyi Dibe Çeker)</div>
+           <div id="hated-genres-container" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+         </div>
+
          <div id="test-questions"></div>
-         <button class="search-btn" style="width:100%; margin-top:10px;" onclick="saveMindProfile()">Kaydet ve Kapat</button>
+         <button class="search-btn" style="width:100%; margin-top:10px; padding:16px;" onclick="saveMindProfile()">Kaydet ve Kapat</button>
        </div>
     </div>
   </div>
@@ -370,7 +387,9 @@ let isLoginMode = true;
 let currentUser = null;
 window.myWatchlist = [];
 window.currentSort = 'date_desc';
-let userMindProfile = {};
+let userMindProfile = { lovedGenres: [], hatedGenres: [] };
+
+const allGenres = ["Aksiyon", "Dram", "Komedi", "Korku", "Bilimkurgu", "Gerilim", "Suç", "Gizem", "Romantik", "Belgesel", "Savaş", "Tarih", "Fantastik", "Müzik", "Animasyon", "Aile", "Vahşi Batı"];
 
 const mindQuestions = [
   { id: "q1", text: "Karakterlerin ahlaki açıdan kusurlu olması, 'gri' alanlarda gezinen anti-kahramanlar olmaları hoşuma gider.", keys: ["anti hero", "moral ambiguity", "inner conflict", "corruption"] },
@@ -398,10 +417,14 @@ auth.onAuthStateChanged(function(user) {
     document.getElementById("auth-user-email").innerText = user.email;
     document.getElementById("auth-title").innerText = "Profil Ayarları";
     db.collection("users").doc(user.uid).get().then(doc => {
-      if(doc.exists && doc.data().mindProfile) userMindProfile = doc.data().mindProfile;
+      if(doc.exists && doc.data().mindProfile) {
+          userMindProfile = doc.data().mindProfile;
+          if(!userMindProfile.lovedGenres) userMindProfile.lovedGenres = [];
+          if(!userMindProfile.hatedGenres) userMindProfile.hatedGenres = [];
+      }
     });
   } else {
-    currentUser = null; userMindProfile = {};
+    currentUser = null; userMindProfile = { lovedGenres: [], hatedGenres: [] };
     document.getElementById("auth-main-text").innerText = "Giriş Yap";
     document.getElementById("auth-body-unlogged").style.display = "block";
     document.getElementById("auth-body-logged").style.display = "none";
@@ -436,7 +459,7 @@ function handleAuthSubmit() {
       }).finally(() => { btn.disabled = false; btn.innerText = "Giriş Yap"; });
   } else {
     auth.createUserWithEmailAndPassword(email, pass).then(userCredential => {
-        return db.collection("users").doc(userCredential.user.uid).set({ email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), mindProfile: {} });
+        return db.collection("users").doc(userCredential.user.uid).set({ email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), mindProfile: { lovedGenres: [], hatedGenres: [] } });
       }).then(closeAuthModal).catch(error => {
         errDiv.style.display = "block"; errDiv.innerText = error.code === 'auth/email-already-in-use' ? "E-posta zaten kullanımda." : (error.code === 'auth/weak-password' ? "Şifre zayıf." : "Hata oluştu.");
       }).finally(() => { btn.disabled = false; btn.innerText = "Kayıt Ol"; });
@@ -447,6 +470,20 @@ function handleLogout() { auth.signOut(); }
 function showMindTest() {
   const area = document.getElementById("mind-test-area");
   area.style.display = "block";
+  
+  // TÜR HAPLARINI ÇİZ
+  const lContainer = document.getElementById("loved-genres-container");
+  const hContainer = document.getElementById("hated-genres-container");
+  lContainer.innerHTML = ""; hContainer.innerHTML = "";
+  
+  allGenres.forEach(g => {
+      let isLoved = userMindProfile.lovedGenres && userMindProfile.lovedGenres.includes(g);
+      let isHated = userMindProfile.hatedGenres && userMindProfile.hatedGenres.includes(g);
+      
+      lContainer.innerHTML += `<div class="genre-pill ${isLoved ? 'loved' : ''}" onclick="toggleGenre('${g}', 'love', this)">${g}</div>`;
+      hContainer.innerHTML += `<div class="genre-pill ${isHated ? 'hated' : ''}" onclick="toggleGenre('${g}', 'hate', this)">${g}</div>`;
+  });
+
   const container = document.getElementById("test-questions");
   container.innerHTML = "";
   mindQuestions.forEach((q, index) => {
@@ -462,11 +499,29 @@ function showMindTest() {
       </div>`;
   });
 }
+
+function toggleGenre(genre, type, el) {
+    if(type === 'love') {
+        if(!userMindProfile.lovedGenres) userMindProfile.lovedGenres = [];
+        if(userMindProfile.lovedGenres.includes(genre)) { userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); el.classList.remove('loved'); } 
+        else { userMindProfile.lovedGenres.push(genre); el.classList.add('loved'); }
+        // Eğer hate listesinde varsa oradan çıkar
+        if(userMindProfile.hatedGenres && userMindProfile.hatedGenres.includes(genre)) { userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); showMindTest(); }
+    } else {
+        if(!userMindProfile.hatedGenres) userMindProfile.hatedGenres = [];
+        if(userMindProfile.hatedGenres.includes(genre)) { userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); el.classList.remove('hated'); } 
+        else { userMindProfile.hatedGenres.push(genre); el.classList.add('hated'); }
+        // Eğer love listesinde varsa oradan çıkar
+        if(userMindProfile.lovedGenres && userMindProfile.lovedGenres.includes(genre)) { userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); showMindTest(); }
+    }
+}
+
 function setMindOpt(btn) {
   const qid = btn.dataset.qid; const val = btn.dataset.val;
   document.querySelectorAll(`[data-qid="${qid}"]`).forEach(b => b.classList.remove("active"));
   btn.classList.add("active"); userMindProfile[qid] = val;
 }
+
 function saveMindProfile() {
   if (!currentUser) return;
   db.collection("users").doc(currentUser.uid).update({ mindProfile: userMindProfile }).then(() => {
@@ -475,29 +530,44 @@ function saveMindProfile() {
   });
 }
 
-function calculateMatchScore(filmKeywords, releaseDate) {
-  if (!Object.keys(userMindProfile).length || Object.keys(userMindProfile).length < 5) return null; 
-  let totalScore = 0; let maxPossible = 0;
+// YENİ ÖDÜLLENDİRİCİ MATEMATİK ALGORİTMASI
+function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
+  // Eğer kullanıcı testi doldurmamışsa veya çok az doldurmuşsa hesaplama (null dön)
+  if (!userMindProfile || (Object.keys(userMindProfile).length < 5 && (!userMindProfile.lovedGenres || userMindProfile.lovedGenres.length === 0))) return null; 
+  
+  let score = 50; // Herkes 50 puanla başlar
   const kwList = filmKeywords.map(k => k.name.toLowerCase());
   const year = releaseDate ? parseInt(releaseDate.split("-")[0]) : 2024;
+  const fGenres = filmGenres ? filmGenres.map(g => g.name) : [];
 
+  // TÜR ÇARPANLARI (Devasa etki)
+  if (userMindProfile.lovedGenres && userMindProfile.lovedGenres.length > 0) {
+      userMindProfile.lovedGenres.forEach(g => { if(fGenres.includes(g)) score += 15; });
+  }
+  if (userMindProfile.hatedGenres && userMindProfile.hatedGenres.length > 0) {
+      userMindProfile.hatedGenres.forEach(g => { if(fGenres.includes(g)) score -= 25; });
+  }
+
+  // ETİKET ÇARPANLARI
   mindQuestions.forEach(q => {
     const userVal = userMindProfile[q.id];
     if (!userVal || userVal === 'meh') return; 
-    maxPossible += 10;
-    let questionMatch = false;
     
-    if (q.id === "q14" && year < 2000) questionMatch = true; 
-    else if (q.keys.some(k => kwList.some(tk => tk.includes(k)))) questionMatch = true;
+    let hasKeyword = false;
+    if (q.id === "q14" && year < 2000) hasKeyword = true; 
+    else if (q.keys.some(k => kwList.some(tk => tk.includes(k)))) hasKeyword = true;
 
-    if (userVal === 'yes' && questionMatch) totalScore += 10;
-    if (userVal === 'no' && questionMatch) totalScore -= 8;
-    if (userVal === 'yes' && !questionMatch) totalScore += 2; 
+    if (hasKeyword) {
+        if (userVal === 'yes') score += 12; // Tam isabet bonusu
+        if (userVal === 'no') score -= 15;  // İstenmeyen içerik cezası
+    }
   });
 
-  if (maxPossible === 0) return null;
-  let final = Math.round((totalScore / maxPossible) * 100);
-  return Math.min(99, Math.max(10, final + 40)); 
+  // Skoru 12 ile 98 arasında sınırla (İnandırıcılık için 100 yapmıyoruz)
+  if (score > 98) score = 98;
+  if (score < 12) score = 12;
+
+  return score; 
 }
 
 
@@ -746,8 +816,8 @@ window.loadFilm = function(id, mt, isRandom) {
       var isTrueStory = kwNames.some(function(k) { return k.includes("based on true story") || k.includes("true story"); });
       var isRemake = kwNames.some(function(k) { return k === "remake"; });
 
-      // EŞLEŞME PUANI HESAPLAMASI
-      var matchScore = calculateMatchScore(dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : [], dd.release_date || dd.first_air_date);
+      // EŞLEŞME PUANI HESAPLAMASI (GÜNCELLENDİ)
+      var matchScore = calculateMatchScore(dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : [], dd.release_date || dd.first_air_date, dd.genres || []);
 
       function render(imdbScore, rtScore, metaScore, od) {
         var iCls = imdbScore === null ? "na" : "imdb";
@@ -791,7 +861,6 @@ window.loadFilm = function(id, mt, isRandom) {
         if (isBook) tagsHtml += '<span class="tag-pill book">📚 Kitaptan Uyarlama</span>';
         if (isRemake) tagsHtml += '<span class="tag-pill remake">🔄 Yeniden Çekim</span>';
 
-        // EŞLEŞME ROZETİ EKLENDİ
         var matchBadgeHtml = '';
         if (matchScore !== null) {
              matchBadgeHtml = '<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px;">🧠 ZİHİNSEL EŞLEŞME: %' + matchScore + '</div>';
