@@ -107,7 +107,7 @@
     .tag-pill.book { background: rgba(139, 69, 19, 0.1); color: #8b4513; border: 1px solid rgba(139, 69, 19, 0.3); }
     .tag-pill.remake { background: rgba(100, 100, 100, 0.1); color: #777; border: 1px solid rgba(100, 100, 100, 0.3); }
     
-    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; }
+    .tag-info-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; border-radius: 50%; width: 22px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 2px; transition: all 0.2s; flex-shrink: 0; padding:0;}
     .tag-info-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--muted); }
 
     .card-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.05em; color:var(--text); margin-bottom:4px; line-height:1.1; word-wrap: break-word; }
@@ -176,7 +176,7 @@
 
     /* YILDIZ PUANLAMA STİLLERİ */
     .user-rating-section { background: var(--bg2); padding: 22px 20px; text-align: center; border-bottom: 1.5px solid var(--border); }
-    .rating-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin-bottom: 10px; }
+    .rating-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
     .stars-container { display: inline-flex; position: relative; font-size: 40px; cursor: pointer; color: var(--star-empty); user-select: none; line-height: 1; }
     .stars-container .star-filled { position: absolute; top: 0; left: 0; color: var(--star-fill); overflow: hidden; width: 0%; pointer-events: none; white-space: nowrap; transition: width 0.1s; }
     .star-hint { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--accent); margin-top: 8px; min-height: 18px; }
@@ -190,7 +190,7 @@
     .badge.weak        { background: rgba(192, 48, 48, 0.08);  color: var(--meta-red); }
     .badge.trash       { background: rgba(0, 0, 0, 0.08);      color: #666; }
     
-    .badge.match       { background: var(--tmdb); color: #fff; font-size:13px; font-weight: 600; letter-spacing: .05em; padding: 8px 16px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3); border: 1px solid rgba(255,255,255,0.2); width: 100%; justify-content: center; margin-bottom: 15px;}
+    .badge.match       { background: var(--tmdb); color: #fff; font-size:13px; font-weight: 600; letter-spacing: .05em; padding: 8px 16px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3); border: 1px solid rgba(255,255,255,0.2); width: 100%; justify-content: center; margin-bottom: 15px; display:flex; align-items:center;}
     
     .plot { font-size:13.5px; line-height:1.7; color:var(--text); opacity:0.9; }
 
@@ -344,7 +344,10 @@
        <div style="text-align:center; margin-bottom:24px;">
            <div style="font-size:15px; margin-bottom:6px;">Hoş geldin,</div>
            <div id="auth-user-email" style="font-weight:bold; color:var(--accent);"></div>
-           <div id="user-stats" style="font-size:11px; color:var(--muted); margin-top:6px; font-weight: 600;">Puanlanan Film: 0 | Algoritma Gücü: %0</div>
+           <div id="user-stats" style="font-size:11px; color:var(--muted); margin-top:6px; font-weight: 600; display:flex; align-items:center; justify-content:center; gap:4px;">
+              Puanlanan Film: 0 | Algoritma Gücü: %0
+              <button class="tag-info-btn" onclick="showInfoModal('Algoritma Gücü')">?</button>
+           </div>
        </div>
        
        <button class="search-btn" style="width:100%; margin-bottom:12px; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="fetchWatchlist()">
@@ -359,8 +362,10 @@
        <button class="search-btn" style="width:100%; background:transparent; color:var(--meta-red); border:1px solid var(--meta-red);" onclick="handleLogout()">Çıkış Yap</button>
 
        <div id="mind-test-area" style="display:none; margin-top:24px; border-top:1.5px solid var(--border); padding-top:20px;">
-         <h3 style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:15px; text-align:center;">Sinematik Zihin Testi</h3>
-         <p style="font-size:12px; color:var(--muted); text-align:center; margin-bottom:24px; line-height:1.5;">Bu test, algoritmanın size dürüst bir eşleşme puanı sunabilmesi için özel olarak tasarlanmıştır.</p>
+         <h3 style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:20px; text-align:center; display:flex; justify-content:center; align-items:center; gap:6px;">
+            Sinematik Zihin Testi
+            <button class="tag-info-btn" style="margin:0;" onclick="showInfoModal('Zihin Profili')">?</button>
+         </h3>
          
          <div class="test-card">
            <div class="test-q" style="color:var(--tmdb);">Özellikle Sevdiğim Türler (Eşleşmeyi Zirveye Taşır)</div>
@@ -379,6 +384,24 @@
 </div>
 
 <script>
+// ==========================================
+// BİLGİLENDİRME MODALLARI (AÇIKLAMALAR)
+// ==========================================
+window.showInfoModal = function(type) {
+    var title = "", desc = "";
+    if (type === 'Zihin Profili') {
+        title = "Zihin Profili";
+        desc = "Senin sinematik zevklerini ve tahammül sınırlarını belirmeye yönelik bir test. Buna verdiğin cevaplar, görüntülediğin içeriğin senin zevklerine ne kadar uygun olduğunu 'Zihinsel Eşleşme' kategorisinde görmeni sağlayacak.";
+    } else if (type === 'Algoritma Gücü') {
+        title = "Algoritma Gücü";
+        desc = "Eserlere puan verdikçe, 'Zihinsel Eşleşme' konusunda daha isabetli tahminler alacaksın.";
+    } else if (type === 'Zihinsel Eşleşme') {
+        title = "Zihinsel Eşleşme";
+        desc = "Sıradan bir tavsiye olmanın ötesinde, senin zevklerini ve eserlere verdiğin puanları dikkate alarak, bir içeriğin sana ne kadar hitap ettiğini gösterir. Sen puan vermeye devam ettikçe daha isabetli tahminler yapar.";
+    }
+    openGenericModal(title, '<div style="font-size:14px; line-height:1.6; color:var(--text);">' + desc + '</div>');
+};
+
 // ==========================================
 // 1. FIREBASE BAŞLATMA
 // ==========================================
@@ -571,7 +594,9 @@ function updateStatsUI() {
   const count = Object.keys(userRatings).length;
   const weight = Math.round(calculateDavranisWeight(count) * 100);
   const el = document.getElementById("user-stats");
-  if(el) el.innerText = `Puanlanan Film: ${count} | Algoritma Gücü: %${weight}`;
+  if(el) {
+      el.innerHTML = `Puanlanan Film: ${count} | Algoritma Gücü: %${weight} <button class="tag-info-btn" onclick="showInfoModal('Algoritma Gücü')">?</button>`;
+  }
 }
 
 function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
@@ -602,7 +627,7 @@ function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
   const wDavranis = calculateDavranisWeight(ratedCount);
   const wTest = 1 - wDavranis;
 
-  let final = (score * wTest) + (score * wDavranis); // İleride davranış motoru güçlendirilecek
+  let final = (score * wTest) + (score * wDavranis);
   
   if (final > 98) final = 98;
   if (final < 12) final = 12;
@@ -900,7 +925,6 @@ window.loadFilm = function(id, mt, isRandom) {
       var isTrueStory = kwNames.some(function(k) { return k.includes("based on true story") || k.includes("true story"); });
       var isRemake = kwNames.some(function(k) { return k === "remake"; });
 
-      // EŞLEŞME PUANI HESAPLAMASI (GÜNCELLENDİ)
       var matchScore = calculateMatchScore(dd.keywords ? (dd.keywords.keywords || dd.keywords.results || []) : [], dd.release_date || dd.first_air_date, dd.genres || []);
       var existingRating = userRatings[id] || 0;
       currentDraftRating = existingRating;
@@ -949,7 +973,7 @@ window.loadFilm = function(id, mt, isRandom) {
 
         var matchBadgeHtml = '';
         if (matchScore !== null) {
-             matchBadgeHtml = '<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %' + matchScore + '</div>';
+             matchBadgeHtml = '<div class="badge match" style="width:100%; justify-content:center; margin-bottom:15px; margin-top:10px;">🧠 ZİHİNSEL EŞLEŞME: %' + matchScore + ' <button class="tag-info-btn" style="border-color:rgba(255,255,255,0.4); color:#fff; width:18px; height:18px; font-size:10px; margin-left:6px;" onclick="showInfoModal(\'Zihinsel Eşleşme\')">?</button></div>';
         }
 
         var tagsContainerHtml = tagsHtml !== '' ? '<div class="tags-container" id="tags-container-' + id + '">' + tagsHtml + '<button class="tag-info-btn" onclick="showTagInfoModal()">?</button></div>' : '<div class="tags-container" id="tags-container-' + id + '"></div>';
@@ -963,12 +987,11 @@ window.loadFilm = function(id, mt, isRandom) {
           'onclick="handleWatchlistBtn(this)">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> Listeye Ekle</button>';
 
-        // PUANLAMA HTML'İ
         var safeTitle = encodeURIComponent(title).replace(/'/g, "\\'");
         var safePoster = rawPoster ? rawPoster.replace(/'/g, "\\'") : '';
         var ratingHtml = `
           <div class="user-rating-section">
-            <div class="rating-label">Senin Puanın (Letterboxd Usulü)</div>
+            <div class="rating-label">Senin Puanın</div>
             <div class="stars-container" onmousemove="handleStarMove(event, this)" onclick="submitRating(${id}, '${safeTitle}', '${safePoster}')">
               <span>☆☆☆☆☆</span>
               <div class="star-filled">★★★★★</div>
