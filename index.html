@@ -237,8 +237,8 @@
     .err .icon { font-size:32px; margin-bottom:10px; }
     .tip { margin-top:32px; font-size:11px; color:var(--muted); letter-spacing:.1em; text-align:center; line-height:1.8; opacity:0.8;}
 
-    /* MODAL STİLLERİ (Z-INDEX GÜNCELLENDİ) */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 20px; backdrop-filter: blur(3px); }
+    /* MODAL STİLLERİ (Z-INDEX 2000 GÜVENCESİ) */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 20px; backdrop-filter: blur(3px); }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     .modal-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; display: flex; flex-direction: column; }
     .modal-overlay.active .modal-box { transform: translateY(0); }
@@ -271,7 +271,9 @@
     .genre-pill.loved { background: var(--tmdb); color: #fff; border-color: var(--tmdb); }
     .genre-pill.hated { background: var(--meta-red); color: #fff; border-color: var(--meta-red); }
 
-    .site-footer { margin-top: auto; padding: 30px 0 10px; text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; opacity: 0.7; font-family: 'DM Sans', sans-serif; width: 100%; }
+    .site-footer { margin-top: auto; padding: 30px 0 20px; text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; opacity: 0.8; font-family: 'DM Sans', sans-serif; width: 100%; line-height: 1.8;}
+    .footer-link { color: var(--text); text-decoration: none; font-weight: 600; border-bottom: 1px solid var(--muted); padding-bottom: 2px; transition: color 0.2s, border-color 0.2s; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; }
+    .footer-link:hover { color: var(--accent); border-color: var(--accent); }
   </style>
 </head>
 <body>
@@ -304,7 +306,10 @@
     <div id="result"></div>
     <p class="tip">Telefonda: Menü → Ana Ekrana Ekle</p>
     
-    <div class="site-footer">Atilla Kuru tarafından tasarlandı.</div>
+    <div class="site-footer">
+      Atilla Kuru tarafından tasarlandı.<br><br>
+      <a class="footer-link" onclick="showHowToUseModal(event)">Nasıl Kullanılır?</a>
+    </div>
   </div>
 </div>
 
@@ -314,7 +319,7 @@
       <div id="generic-modal-title" class="modal-title">Başlık</div>
       <button class="modal-close" onclick="closeGenericModal()">&times;</button>
     </div>
-    <div id="generic-modal-content" class="modal-body"></div>
+    <div id="generic-modal-content" class="modal-body" style="padding-right: 14px;"></div>
   </div>
 </div>
 
@@ -325,7 +330,7 @@
   </div>
 </div>
 
-<div id="auth-modal" class="modal-overlay">
+<div id="auth-modal" class="modal-overlay" style="z-index: 1000;">
   <div class="modal-box" style="max-width: 450px;">
     <div class="modal-header">
       <div id="auth-title" class="modal-title">Giriş Yap</div>
@@ -385,8 +390,63 @@
 
 <script>
 // ==========================================
-// BİLGİLENDİRME MODALLARI (AÇIKLAMALAR)
+// NASIL KULLANILIR VE BİLGİLENDİRME MODALLARI
 // ==========================================
+window.showHowToUseModal = function(e) {
+    if (e) e.preventDefault();
+    var contentHTML = `
+        <div style="font-size:13.5px; line-height:1.6; color:var(--text); max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+            <p style="margin-bottom:16px;">Bu platform, film ve diziler hakkında farklı veri tabanlarından bilgi çekerek analiz sunan bir araçtır. Sayfa yapısı ve kullanım özellikleri yukarıdan aşağıya doğru şu şekildedir:</p>
+            
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">1. Arama ve Keşif</strong><br>
+                • <strong>Arama Çubuğu:</strong> İstediğiniz film veya diziyi aratabilirsiniz.<br>
+                • <strong>Konfor Alanından Çık:</strong> Belirli temalara (psikolojik, felsefi, yavaş tempolu vb.) sahip ve belli bir puanın üzerindeki yapımları rastgele karşınıza çıkarır.<br>
+                • <strong>Tema Değiştirici:</strong> Sağ üst köşeden açık veya koyu tema arasında geçiş yapabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">2. Künye ve Etiketler</strong><br>
+                • Yapımın afişi, yılı, süresi, ülkesi ve türleri listelenir.<br>
+                • Verilere dayalı olarak filme otomatik atanan bazı etiketler bulunur (Örn: Auteur Kalemi, Sinefiller İçin, Halkın Seçimi). Bu etiketlerin hangi kriterlere göre atandığını görmek için yanlarındaki <strong>(?)</strong> butonuna tıklayabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">3. Aksiyonlar, Bağlantılar ve Kadro</strong><br>
+                • <strong>Aksiyon Butonları:</strong> Yapımı izleme listenize ekleyebilir, fragmanını açabilir veya sayfa bağlantısını kopyalayabilirsiniz.<br>
+                • <strong>Platform Bağlantıları:</strong> Yapımın IMDb, Letterboxd ve TMDb sayfalarına tek tıkla gidebilirsiniz.<br>
+                • <strong>Nereden İzlenir:</strong> Yapımın Türkiye'de resmi olarak hangi dijital platformlarda bulunduğunu görebilirsiniz.<br>
+                • <strong>Kadroyu Gör:</strong> Yönetmen ve senarist bilgisinin yanı sıra detaylı oyuncu kadrosuna bu butondan ulaşabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">4. Puanlama Sistemi</strong><br>
+                • <strong>Ağırlıklı Ortalama Puan:</strong> Metacritic (%35), IMDb (%30), Rotten Tomatoes (%20) ve TMDb (%15) oranları kullanılarak 100 üzerinden hesaplanan tek bir ortalama puandır.<br>
+                • Altındaki renkli tablolarda ise bu dört platformun kendi bağımsız puanları ayrı ayrı listelenir.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">5. Kişisel Puanınız ve Zihinsel Eşleşme</strong><br>
+                • <strong>Profil ve Test:</strong> Sağ üstteki profil menüsünden 14 soruluk testi çözüp, sevdiğiniz/sevmediğiniz türleri seçerek bir "Zihin Profili" oluşturabilirsiniz.<br>
+                • <strong>Puan Verme:</strong> Sayfadaki 5 yıldızlı sistemi kullanarak yapımları değerlendirebilirsiniz. Puan verdiğiniz yapım sayısı arttıkça, sistemin tercihlerinizi öğrenme oranı (Algoritma Gücü) artar.<br>
+                • <strong>Zihinsel Eşleşme:</strong> Test cevaplarınız ve geçmişte verdiğiniz puanlar dikkate alınarak, incelediğiniz yapımın size hitap etme olasılığı %12 ile %98 arasında bir yüzdeyle gösterilir.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">6. Yorumlar, Çeviri ve Öneriler</strong><br>
+                • Yapım hakkında yazılmış öne çıkan yabancı yorumları okuyabilir, <strong>"Sitede Çevir"</strong> butonuna basarak metinleri doğrudan Türkçe'ye çevirebilirsiniz.<br>
+                • Sayfanın en altında bulunan <strong>"Bunu Sevenler Şunları Da İzledi"</strong> bölümünden benzer yapımlara ulaşabilirsiniz.
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <strong style="color:var(--accent);">7. İzleme Listesi</strong><br>
+                • Profil menünüzden ulaşabileceğiniz İzleme Listenizdeki yapımları, eklenme tarihine veya Ağırlıklı Ortalama puanına göre sıralayabilirsiniz.
+            </div>
+        </div>
+    `;
+    openGenericModal('Nasıl Kullanılır?', contentHTML);
+};
+
 window.showInfoModal = function(type) {
     var title = "", desc = "";
     if (type === 'Zihin Profili') {
