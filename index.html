@@ -58,6 +58,10 @@
     input:disabled { opacity: 0.5; cursor: not-allowed; }
     .search-input-wrap input { padding-right: 40px; }
     
+    .list-search-input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--card); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
+    .list-search-input:focus { border-color: var(--accent); box-shadow: 0 2px 8px var(--glow); }
+    .list-search-input::placeholder { color: var(--muted); opacity: 0.7; }
+
     .clear-btn { position: absolute; right: 12px; background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; padding: 0 4px; outline: none; display: none; line-height: 1; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
     .clear-btn:hover { color: var(--accent); }
 
@@ -215,7 +219,7 @@
     .rec-card img { width: 100%; aspect-ratio: 2/3; display: block; object-fit: cover; }
     .rec-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 24px 8px 10px; font-size: 11px; font-weight: 500; text-align: center; line-height: 1.3; }
 
-    .wl-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; padding: 0 4px; }
+    .wl-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; padding: 0 4px; }
     .wl-title { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--text); letter-spacing:.05em; line-height:1; }
     .wl-sort-group { display: flex; gap: 6px; flex-wrap:wrap; }
     .wl-sort-btn { background: var(--card); border: 1.5px solid var(--border); color: var(--text); padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
@@ -503,7 +507,7 @@ window.showHowToUseModal = function(e) {
             <div style="margin-bottom:16px;">
                 <strong style="color:var(--accent);">5. Kişisel Puanınız ve Zihinsel Eşleşme</strong><br>
                 • <strong>Profil ve Test:</strong> Sağ üstteki profil menüsünden 14 soruluk testi çözüp, sevdiğiniz/sevmediğiniz türleri seçerek bir "Zihin Profili" oluşturabilirsiniz.<br>
-                • <strong>Puan Verme:</strong> Sayfadaki 5 yıldızlı sistemi kullanarak yapımları değerlendirebilirsiniz. Puan verdiğiniz yapım sayısı arttıkça, sistemin tercihlerinizi öğrenme oranı (Algoritma Gücü) artar.<br>
+                • <strong>Puan Verme:</strong> Sayfadaki 5 yıldızlı sistemi kullanarak yapımları değerlendirebilirsiniz. Puan verdiğiniz yapım sayısı arttıkça, sistemin tercihlerinizi öğrenme oranı (Algoritma Gücü) artar. Puanınızı silmek isterseniz yıldızların en soluna (başına) dokunabilirsiniz.<br>
                 • <strong>Zihinsel Eşleşme:</strong> Test cevaplarınız ve geçmişte verdiğiniz puanlar dikkate alınarak, incelediğiniz yapımın size hitap etme olasılığı %12 ile %98 arasında bir yüzdeyle gösterilir.
             </div>
             
@@ -516,6 +520,7 @@ window.showHowToUseModal = function(e) {
                 <strong style="color:var(--accent);">7. İzlenecekler ve İzlenenler Listeleri</strong><br>
                 • Profil menünüzden iki farklı listeye ulaşabilirsiniz. "İzleyeceğim" dediğiniz yapımlar bir listeye, "İzledim" diyerek veya puan verip/günlük tutarak işaretlediğiniz yapımlar diğer listeye kaydolur.<br>
                 • Bir yapıma puan verdiğinizde veya günlüğüne not düştüğünüzde, o yapım otomatik olarak "İzlenecekler" listenizden silinip "İzlenenler" arşivinize geçer.<br>
+                • Listelerde aradığınızı hızlıca bulmak için <strong>Live Search (Canlı Arama)</strong> çubuğunu kullanabilirsiniz. Siz "Film adı veya yılı" yazdıkça liste saniyeler içinde süzülecektir.<br>
                 • İzlenenler listenizi Puan, Eklenme Tarihi ve <strong>İzleme Tarihi</strong>'ne göre sıralayabilirsiniz. Tarih belirtmediğiniz yapımlar her zaman listenin en altında düzeni bozmadan toplanır.<br>
                 • <b>Hata Telafisi (Fail-Safe):</b> Bir yapımı İzlenenler listesinden silseniz dahi, verdiğiniz puan veya günlüğe yazdıklarınız asla silinmez. Yanlışlıkla sildiğiniz bir filmi, puanını veya günlüğünü tekrar kaydederek hiçbir veri kaybı yaşamadan anında İzlenenler listenize geri çağırabilirsiniz.
             </div>
@@ -566,6 +571,7 @@ let isInitialLoad = true;
 window.myList = [];
 window.currentSort = 'date_desc';
 window.currentListType = 'watchlist'; 
+window.currentListSearchTerm = ""; // LIVE SEARCH BELLEĞİ
 let userMindProfile = { lovedGenres: [], hatedGenres: [] };
 let userRatings = {}; 
 let userDiary = {}; 
@@ -822,7 +828,6 @@ function handleStarMove(e, container) {
   const rect = container.getBoundingClientRect();
   const x = e.clientX - rect.left;
   
-  // SIFIRLAMA BÖLGESİ: İlk 15 piksel puanı sıfırlar (Geri Alır)
   if (x < 15) {
       renderStars(0);
       currentDraftRating = 0;
@@ -858,7 +863,6 @@ function ensureInWatchedList(id, mt, title, year, poster, score) {
 function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
   if(!currentUser) { openAuthModal(); return; }
   
-  // PUAN GERİ ALMA MANTIĞI
   if(currentDraftRating === 0) {
       db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).delete().then(() => {
           delete userRatings[movieId];
@@ -868,7 +872,7 @@ function submitRating(movieId, mTitle, mYear, mPoster, mScore, mt) {
               document.getElementById("star-hint").innerText = "Puan Ver";
           }, 1500);
       }).catch(()=>{});
-      return; // İzlenenler listesinden çıkarma yapılmıyor
+      return; 
   }
   
   db.collection("users").doc(currentUser.uid).collection("ratings").doc(movieId.toString()).set({
@@ -992,13 +996,14 @@ window.clearDiaryEntry = function() {
 };
 
 // ==========================================
-// 6. ÇİFT İZLEME LİSTESİ MANTIĞI & NULL HANDLING
+// 6. ÇİFT İZLEME LİSTESİ MANTIĞI & CANLI ARAMA (LIVE SEARCH)
 // ==========================================
 window.fetchUserList = function(listType) {
     closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
     if (!currentUser) return;
     
     window.currentListType = listType; 
+    window.currentListSearchTerm = ""; // Listeler arası geçişte arama çubuğunu sıfırla
     let listNameTR = listType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
     
     resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
@@ -1007,6 +1012,21 @@ window.fetchUserList = function(listType) {
         window.myList = []; snap.forEach(doc => window.myList.push(doc.data()));
         renderListUI(window.currentSort);
     }).catch(() => resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Hata oluştu.</div></div></div>');
+};
+
+window.liveFilterList = function(val) {
+    window.currentListSearchTerm = val;
+    let term = val.toLowerCase().trim();
+    let cards = document.querySelectorAll('.wl-card-grid');
+    cards.forEach(card => {
+        let title = card.getAttribute('data-title').toLowerCase();
+        let year = card.getAttribute('data-year') || '';
+        if(title.includes(term) || year.includes(term)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 };
 
 window.renderListUI = function(sortType) {
@@ -1040,16 +1060,38 @@ window.renderListUI = function(sortType) {
 
     let watchedDateBtns = window.currentListType === 'watched' ? `<button class="wl-sort-btn ${sortType.includes('watched_date') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'watched_date_desc' ? 'watched_date_asc' : 'watched_date_desc')">İzleme Tarihi ${sortType === 'watched_date_asc' ? '▲' : '▼'}</button>` : '';
 
-    let html = `<div style="width: 100%;"><div class="wl-header"><div class="wl-title">${listNameTR} (${sorted.length})</div><div class="wl-sort-group"><button class="wl-sort-btn ${sortType === 'date_desc' || sortType === 'date_asc' ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'date_desc' ? 'date_asc' : 'date_desc')">Eklenme Tarihi ${sortType === 'date_asc' ? '▲' : '▼'}</button><button class="wl-sort-btn ${sortType.includes('score') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'score_desc' ? 'score_asc' : 'score_desc')">Puan ${sortType === 'score_asc' ? '▲' : '▼'}</button>${watchedDateBtns}</div></div><div class="wl-grid">`;
+    let listSearchHtml = `<input type="text" class="list-search-input" placeholder="Film adı veya yapım yılı..." value="${window.currentListSearchTerm}" oninput="liveFilterList(this.value)">`;
+
+    let html = `<div style="width: 100%;">
+                    <div class="wl-header">
+                        <div class="wl-title">${listNameTR} (${sorted.length})</div>
+                        <div class="wl-sort-group">
+                            <button class="wl-sort-btn ${sortType === 'date_desc' || sortType === 'date_asc' ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'date_desc' ? 'date_asc' : 'date_desc')">Eklenme Tarihi ${sortType === 'date_asc' ? '▲' : '▼'}</button>
+                            <button class="wl-sort-btn ${sortType.includes('score') ? 'active' : ''}" onclick="renderListUI(window.currentSort === 'score_desc' ? 'score_asc' : 'score_desc')">Puan ${sortType === 'score_asc' ? '▲' : '▼'}</button>
+                            ${watchedDateBtns}
+                        </div>
+                    </div>
+                    ${listSearchHtml}
+                    <div class="wl-grid">`;
     
     sorted.forEach(item => {
         let posterSrc = item.poster && item.poster !== 'null' ? item.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="150" style="background:%23ede0ce"></svg>';
         let scoreBadge = item.score ? `<div class="wl-score-badge">${parseFloat(item.score).toFixed(1)}</div>` : '';
         let diaryBadge = userDiary[item.id] ? `<div class="diary-badge">📝</div>` : '';
         
-        html += `<div class="wl-card-grid" onclick="loadFilm(${item.id}, '${item.mt}', false); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}${diaryBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
+        // CANLI ARAMA İÇİN DATA ETİKETLERİ EKLENDİ
+        html += `<div class="wl-card-grid" data-title="${item.title.replace(/"/g, '&quot;')}" data-year="${item.year || ''}" onclick="loadFilm(${item.id}, '${item.mt}', false); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}${diaryBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
     });
-    html += `</div></div>`; resEl.innerHTML = html;
+    html += `</div></div>`; 
+    resEl.innerHTML = html;
+
+    // Eğer sıralama butonuna basıldıysa ve arama çubuğunda zaten bir metin varsa filtreyi tekrar uygula
+    if(window.currentListSearchTerm) {
+        window.liveFilterList(window.currentListSearchTerm);
+        // İmleci kutunun sonuna koymak için minik bir hile
+        let searchInput = document.querySelector('.list-search-input');
+        if(searchInput) { searchInput.focus(); let val = searchInput.value; searchInput.value = ''; searchInput.value = val; }
+    }
 };
 
 window.removeFromList = function(id, listType) {
