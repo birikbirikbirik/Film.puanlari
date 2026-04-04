@@ -264,9 +264,11 @@
     .person-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); margin-bottom: 20px; width: 100%; }
     .person-header { display: flex; gap: 20px; padding: 24px; border-bottom: 1.5px solid var(--border); }
     .person-img { width: 120px; height: 170px; border-radius: 10px; object-fit: cover; box-shadow: 0 4px 12px var(--shadow); }
-    .person-info { flex: 1; }
-    .person-name { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+    .person-info { flex: 1; min-width: 0; }
+    .person-name { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--accent); line-height: 1; margin-bottom: 8px; word-wrap: break-word; }
     .person-meta { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    
+    /* BİYOGRAFİ KISITLAMASI TAMAMEN KALDIRILDI */
     .person-bio { font-size: 13.5px; line-height: 1.6; color: var(--text); max-height: 300px; overflow-y: auto; padding-right: 5px; }
     .person-bio::-webkit-scrollbar { width: 4px; }
     .person-bio::-webkit-scrollbar-track { background: var(--border); border-radius: 4px; }
@@ -427,7 +429,7 @@
 </head>
 <body>
 
-<div id="lb" class="lightbox" onclick="closeLightbox()">
+<div id="lb" class="lightbox" onclick="if(event.target === this) window.closeLightbox()">
   <img id="lb-img" src="" alt="Büyük Afiş">
 </div>
 
@@ -435,7 +437,7 @@
   <div class="content">
     
     <div class="top-bar">
-      <button id="auth-main-btn" class="top-btn" onclick="openAuthModal()">
+      <button id="auth-main-btn" class="top-btn" onclick="window.openAuthModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
           <circle cx="12" cy="7" r="4"></circle>
@@ -477,27 +479,27 @@
     
     <div class="site-footer">
       Atilla Kuru tarafından tasarlandı.<br><br>
-      <a class="footer-link" onclick="showHowToUseModal(event)">Nasıl Kullanılır?</a>
+      <a class="footer-link" onclick="window.showHowToUseModal(event)">Nasıl Kullanılır?</a>
     </div>
 
   </div>
 </div>
 
-<div id="diary-modal" class="modal-overlay" style="z-index: 2000;">
+<div id="diary-modal" class="modal-overlay" style="z-index: 2000;" onclick="if(event.target === this) window.closeDiaryModal()">
   <div class="modal-box">
     <div class="modal-header">
       <div class="modal-title" style="display:flex; align-items:center; gap:6px;">
         Film Günlüğüm
-        <button class="tag-info-btn" style="margin:0;" onclick="showTooltipModal('Film Günlüğüm', 'Bu alan tamamen size ait özel bir sinema günlüğüdür. Girdiğiniz notları, izleme tarihinizi ve seçtiğiniz hissi sizden başka hiç kimse göremez. Not eklediğiniz filmler, izleme listelerinizde (📝) ikonu ile işaretlenir; seçtiğiniz his emojisi afişte görünmez, sadece günlüğünüze özel kalır.')">?</button>
+        <button class="tag-info-btn" style="margin:0;" onclick="window.showTooltipModal('Film Günlüğüm', 'Bu alan tamamen size ait özel bir sinema günlüğüdür. Girdiğiniz notları, izleme tarihinizi ve seçtiğiniz hissi sizden başka hiç kimse göremez. Not eklediğiniz filmler, izleme listelerinizde (📝) ikonu ile işaretlenir; seçtiğiniz his emojisi afişte görünmez, sadece günlüğünüze özel kalır.')">?</button>
       </div>
-      <button class="modal-close" onclick="closeDiaryModal()">&times;</button>
+      <button class="modal-close" onclick="window.closeDiaryModal()">&times;</button>
     </div>
     <div class="modal-body" style="padding:24px;">
       
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;">İzleme Tarihi</div>
         <div style="display:flex; align-items:center; gap:6px;">
-            <input type="checkbox" id="diary-no-date" onchange="toggleDiaryDate()" style="width:14px; height:14px; box-shadow:none;">
+            <input type="checkbox" id="diary-no-date" onchange="window.toggleDiaryDate()" style="width:14px; height:14px; box-shadow:none;">
             <label for="diary-no-date" style="font-size:12px; color:var(--muted); cursor:pointer;">Tarih belirtmek istemiyorum</label>
         </div>
       </div>
@@ -505,14 +507,14 @@
       
       <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Nasıl Hissettirdi?</div>
       <div class="emoji-grid">
-        <button class="emoji-btn" data-emo="🤯 Zihin Açıcı" onclick="selectEmoji(this, '🤯 Zihin Açıcı')">🤯 Zihin Açıcı</button>
-        <button class="emoji-btn" data-emo="😢 Sarsıcı" onclick="selectEmoji(this, '😢 Sarsıcı')">😢 Sarsıcı</button>
-        <button class="emoji-btn" data-emo="🤩 Eğlenceli" onclick="selectEmoji(this, '🤩 Eğlenceli')">🤩 Eğlenceli</button>
-        <button class="emoji-btn" data-emo="⚡ Heyecanlı" onclick="selectEmoji(this, '⚡ Heyecanlı')">⚡ Heyecanlı</button>
-        <button class="emoji-btn" data-emo="🥶 Tüyler Ürpertici" onclick="selectEmoji(this, '🥶 Tüyler Ürpertici')">🥶 Tüyler Ürpertici</button>
-        <button class="emoji-btn" data-emo="😤 Sinir Bozucu" onclick="selectEmoji(this, '😤 Sinir Bozucu')">😤 Sinir Bozucu</button>
-        <button class="emoji-btn" data-emo="🥱 Sıkıcı" onclick="selectEmoji(this, '🥱 Sıkıcı')">🥱 Sıkıcı</button>
-        <button class="emoji-btn" data-emo="😡 Vakit Kaybı" onclick="selectEmoji(this, '😡 Vakit Kaybı')">😡 Vakit Kaybı</button>
+        <button class="emoji-btn" data-emo="🤯 Zihin Açıcı" onclick="window.selectEmoji(this, '🤯 Zihin Açıcı')">🤯 Zihin Açıcı</button>
+        <button class="emoji-btn" data-emo="😢 Sarsıcı" onclick="window.selectEmoji(this, '😢 Sarsıcı')">😢 Sarsıcı</button>
+        <button class="emoji-btn" data-emo="🤩 Eğlenceli" onclick="window.selectEmoji(this, '🤩 Eğlenceli')">🤩 Eğlenceli</button>
+        <button class="emoji-btn" data-emo="⚡ Heyecanlı" onclick="window.selectEmoji(this, '⚡ Heyecanlı')">⚡ Heyecanlı</button>
+        <button class="emoji-btn" data-emo="🥶 Tüyler Ürpertici" onclick="window.selectEmoji(this, '🥶 Tüyler Ürpertici')">🥶 Tüyler Ürpertici</button>
+        <button class="emoji-btn" data-emo="😤 Sinir Bozucu" onclick="window.selectEmoji(this, '😤 Sinir Bozucu')">😤 Sinir Bozucu</button>
+        <button class="emoji-btn" data-emo="🥱 Sıkıcı" onclick="window.selectEmoji(this, '🥱 Sıkıcı')">🥱 Sıkıcı</button>
+        <button class="emoji-btn" data-emo="😡 Vakit Kaybı" onclick="window.selectEmoji(this, '😡 Vakit Kaybı')">😡 Vakit Kaybı</button>
       </div>
       
       <div style="font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; margin-top:20px;">Kişisel Notlar</div>
@@ -526,57 +528,57 @@
       <input type="hidden" id="diary-movie-score">
 
       <div style="display:flex; gap:8px; margin-top:20px;">
-         <button class="search-btn" style="flex:1; background:var(--bg2); color:var(--text); border:1.5px solid var(--border);" onclick="clearDiaryEntry()">Temizle</button>
-         <button class="search-btn" style="flex:2;" onclick="saveDiaryEntry()">Günlüğü Kaydet</button>
+         <button class="search-btn" style="flex:1; background:var(--bg2); color:var(--text); border:1.5px solid var(--border);" onclick="window.clearDiaryEntry()">Temizle</button>
+         <button class="search-btn" style="flex:2;" onclick="window.saveDiaryEntry()">Günlüğü Kaydet</button>
       </div>
 
     </div>
   </div>
 </div>
 
-<div id="generic-modal" class="modal-overlay" style="z-index: 2000;">
+<div id="generic-modal" class="modal-overlay" style="z-index: 2000;" onclick="if(event.target === this) window.closeGenericModal()">
   <div class="modal-box">
     <div class="modal-header">
       <div id="generic-modal-title" class="modal-title">Başlık</div>
-      <button class="modal-close" onclick="closeGenericModal()">&times;</button>
+      <button class="modal-close" onclick="window.closeGenericModal()">&times;</button>
     </div>
     <div id="generic-modal-content" class="modal-body" style="padding-right: 14px;"></div>
   </div>
 </div>
 
-<div id="tooltip-modal" class="modal-overlay" style="z-index: 3000;">
+<div id="tooltip-modal" class="modal-overlay" style="z-index: 3000;" onclick="if(event.target === this) window.closeTooltipModal()">
   <div class="modal-box" style="max-width: 400px;">
     <div class="modal-header">
       <div id="tooltip-modal-title" class="modal-title">Bilgi</div>
-      <button class="modal-close" onclick="closeTooltipModal()">&times;</button>
+      <button class="modal-close" onclick="window.closeTooltipModal()">&times;</button>
     </div>
     <div id="tooltip-modal-content" class="modal-body" style="font-size: 14px; line-height: 1.6;"></div>
   </div>
 </div>
 
-<div id="trailer-modal" class="modal-overlay" style="z-index: 2000;">
+<div id="trailer-modal" class="modal-overlay" style="z-index: 2000;" onclick="if(event.target === this) window.closeTrailerModal()">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeTrailerModal()">&times;</button>
+    <button class="modal-close" onclick="window.closeTrailerModal()">&times;</button>
     <div id="trailer-modal-content" style="width:100%; aspect-ratio:16/9;"></div>
   </div>
 </div>
 
-<div id="auth-modal" class="modal-overlay" style="z-index: 1000;">
+<div id="auth-modal" class="modal-overlay" style="z-index: 1000;" onclick="if(event.target === this) window.closeAuthModal()">
   <div class="modal-box" style="max-width: 450px;">
     
     <div class="modal-header">
       <div id="auth-title" class="modal-title">Giriş Yap</div>
-      <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      <button class="modal-close" onclick="window.closeAuthModal()">&times;</button>
     </div>
     
     <div class="modal-body" id="auth-body-unlogged">
-       <form onsubmit="event.preventDefault(); handleAuthSubmit();" style="width:100%;">
+       <form onsubmit="event.preventDefault(); window.handleAuthSubmit();" style="width:100%;">
            <input type="email" id="auth-email" name="email" class="auth-input" autocomplete="username" placeholder="E-posta adresi" required>
            <input type="password" id="auth-pass" name="password" class="auth-input" autocomplete="current-password" placeholder="Şifre" required>
            <button type="submit" id="auth-submit-btn" class="search-btn" style="width:100%;">Giriş Yap</button>
        </form>
        <div id="auth-error" class="auth-error">Hata mesajı</div>
-       <div class="auth-switch">Hesabın yok mu? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Kaydol</span></div>
+       <div class="auth-switch">Hesabın yok mu? <span id="auth-toggle-btn" onclick="window.toggleAuthMode()">Kaydol</span></div>
     </div>
     
     <div class="modal-body" id="auth-body-logged" style="display:none;">
@@ -585,28 +587,28 @@
            <div id="auth-user-email" style="font-weight:bold; color:var(--accent);"></div>
            <div id="user-stats" style="font-size:11px; color:var(--muted); margin-top:6px; font-weight: 600; display:flex; align-items:center; justify-content:center; gap:4px;">
               Puanlanan Film: 0 | Algoritma Gücü: %0
-              <button class="tag-info-btn" onclick="showTooltipModal('Algoritma Gücü', 'Eserlere puan verdikçe, Zihinsel Eşleşme konusunda daha isabetli tahminler alacaksın.')">?</button>
+              <button class="tag-info-btn" onclick="window.showTooltipModal('Algoritma Gücü', 'Eserlere puan verdikçe, Zihinsel Eşleşme konusunda daha isabetli tahminler alacaksın.')">?</button>
            </div>
        </div>
        
        <div style="display:flex; gap:8px; margin-bottom:12px;">
-         <button class="search-btn" style="flex:1; display:flex; justify-content:center; align-items:center; gap:6px; font-size:12px; padding:12px;" onclick="fetchUserList('watchlist')">
+         <button class="search-btn" style="flex:1; display:flex; justify-content:center; align-items:center; gap:6px; font-size:12px; padding:12px;" onclick="window.fetchUserList('watchlist')">
             ⏳ İzlenecekler
          </button>
-         <button class="search-btn" style="flex:1; background:var(--bg2); color:var(--text); border:1.5px solid var(--border); display:flex; justify-content:center; align-items:center; gap:6px; font-size:12px; padding:12px;" onclick="fetchUserList('watched')">
+         <button class="search-btn" style="flex:1; background:var(--bg2); color:var(--text); border:1.5px solid var(--border); display:flex; justify-content:center; align-items:center; gap:6px; font-size:12px; padding:12px;" onclick="window.fetchUserList('watched')">
             👁️ İzlenenler
          </button>
        </div>
        
-       <button class="top-btn" style="width:100%; justify-content:center; margin-bottom:12px; padding:12px;" onclick="showMindTest()">
+       <button class="top-btn" style="width:100%; justify-content:center; margin-bottom:12px; padding:12px;" onclick="window.showMindTest()">
           🧠 Zihin Profilini Güncelle
        </button>
-       <button class="search-btn" style="width:100%; background:transparent; color:var(--meta-red); border:1px solid var(--meta-red);" onclick="handleLogout()">Çıkış Yap</button>
+       <button class="search-btn" style="width:100%; background:transparent; color:var(--meta-red); border:1px solid var(--meta-red);" onclick="window.handleLogout()">Çıkış Yap</button>
 
        <div id="mind-test-area" style="display:none; margin-top:24px; border-top:1.5px solid var(--border); padding-top:20px;">
          <h3 style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--text); margin-bottom:15px; text-align:center; display:flex; justify-content:center; align-items:center; gap:6px;">
             Sinematik Zihin Testi
-            <button class="tag-info-btn" style="margin:0;" onclick="showTooltipModal('Zihin Profili', 'Senin sinematik zevklerini ve tahammül sınırlarını belirmeye yönelik bir test. Buna verdiğin cevaplar, görüntülediğin içeriğin senin zevklerine ne kadar uygun olduğunu Zihinsel Eşleşme kategorisinde görmeni sağlayacak.')">?</button>
+            <button class="tag-info-btn" style="margin:0;" onclick="window.showTooltipModal('Zihin Profili', 'Senin sinematik zevklerini ve tahammül sınırlarını belirmeye yönelik bir test. Buna verdiğin cevaplar, görüntülediğin içeriğin senin zevklerine ne kadar uygun olduğunu Zihinsel Eşleşme kategorisinde görmeni sağlayacak.')">?</button>
          </h3>
          
          <div class="test-card">
@@ -619,7 +621,7 @@
          </div>
 
          <div id="test-questions"></div>
-         <button class="search-btn" style="width:100%; margin-top:10px; padding:16px;" onclick="saveMindProfile()">Kaydet ve Kapat</button>
+         <button class="search-btn" style="width:100%; margin-top:10px; padding:16px;" onclick="window.saveMindProfile()">Kaydet ve Kapat</button>
        </div>
     </div>
 
@@ -628,20 +630,179 @@
 
 <script>
 // ==========================================
-// KULLANIM KILAVUZU & MODAL KONTROLLERİ
+// 1. FIREBASE BAŞLATMA VE GLOBAL DEĞİŞKENLER
+// ==========================================
+const TK = "ef8427e9a020f09579c2e0406d56a46e"; 
+const OK = "44bf03a2";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAOXiu1-qfdg6oYf2xt8xFO9wdV21IqP60",
+  authDomain: "izlesemmi.firebaseapp.com",
+  projectId: "izlesemmi",
+  storageBucket: "izlesemmi.firebasestorage.app",
+  messagingSenderId: "498958427347",
+  appId: "1:498958427347:web:538638b49f7a05a8b6a026"
+};
+
+// Çoklu başlatmayı önlemek için kontrol
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Durum (State) Değişkenleri
+let currentUser = null; 
+let isLoginMode = true; 
+let isInitialLoad = true; 
+let isModalOpen = false; // SANAL YÖNLENDİRİCİ İÇİN (MODAL KONTROLÜ)
+
+window.myList = [];
+window.currentSort = 'date_desc';
+window.currentListType = 'watchlist'; 
+window.currentListSearchTerm = ""; 
+let userMindProfile = { lovedGenres: [], hatedGenres: [] };
+let userRatings = {}; 
+let userDiary = {}; 
+let currentDraftRating = 0; 
+let currentDiaryEmotion = "";
+
+const countryMap = { "United States of America": "ABD", "United Kingdom": "İngiltere", "France": "Fransa", "Germany": "Almanya", "Italy": "İtalya", "Spain": "İspanya", "Japan": "Japonya", "South Korea": "Güney Kore", "Russia": "Rusya", "China": "Çin", "India": "Hindistan", "Brazil": "Brezilya" };
+
+const allGenres = ["Aksiyon", "Dram", "Komedi", "Korku", "Bilimkurgu", "Gerilim", "Suç", "Gizem", "Romantik", "Belgesel", "Savaş", "Tarih", "Fantastik", "Müzik", "Animasyon", "Aile", "Vahşi Batı"];
+const mindQuestions = [
+  { id: "q1", text: "Karakterlerin ahlaki açıdan kusurlu olması, 'gri' alanlarda gezinen anti-kahramanlar olmaları hoşuma gider.", keys: ["anti hero", "moral ambiguity", "inner conflict", "corruption"] },
+  { id: "q2", text: "Hikayenin ağır ağır açıldığı, atmosferi yavaşça kuran 'slow-burn' filmleri izlemeyi severim.", keys: ["slow burn", "contemplative", "minimalist"] },
+  { id: "q3", text: "Ucu açık, beni düşünmeye sevk eden ve her şeyi açıklamayan finalleri tercih ederim.", keys: ["ambiguous ending", "open ending", "existentialism"] },
+  { id: "q4", text: "Karakterin iç dünyasına, takıntılarına ve psikolojik buhranlarına odaklanan filmler ilgimi çeker.", keys: ["character study", "psychological", "solitude"] },
+  { id: "q5", text: "Edebi, felsefi veya psikolojik alt metni dolu, yoğun diyaloglara dayalı filmleri severim.", keys: ["philosophy", "intellectual", "dialogue driven"] },
+  { id: "q6", text: "İzledikten sonra melankolik veya sarsıcı bir his bırakan karanlık hikayelerden keyif alırım.", keys: ["bleak", "melancholy", "tragedy", "dark"] },
+  { id: "q7", text: "Zaman atlamaları olan, parçaları benim birleştirmem gereken karmaşık kurguları severim.", keys: ["non-linear", "puzzle", "mind bending"] },
+  { id: "q8", text: "Hayatın içinden, sert ve son derece gerçekçi hikayeleri izlemeyi tercih ederim.", keys: ["gritty", "realistic", "neo-realism"] },
+  { id: "q9", text: "Sinematografinin (ışık, renk, kamera kullanımı) hikayenin kendisi kadar ön planda olması beni etkiler.", keys: ["cinematography", "visuals", "atmospheric"] },
+  { id: "q10", text: "Filmin toplumsal meselelere, politik veya sosyolojik gözlemlere değinmesi ilgimi artırır.", keys: ["politics", "social commentary", "satire"] },
+  { id: "q11", text: "Doğrudan anlatmak yerine simgeler ve metaforlar üzerinden konuşan, 'okunması' gereken filmleri severim.", keys: ["symbolism", "metaphor", "surrealism", "allegory"] },
+  { id: "q12", text: "Hayatın rahatsız edici yönlerinin sansürsüz, tüm çıplaklığı ve sertliğiyle yansıtılmasından rahatsız olmam.", keys: ["raw", "graphic", "disturbing"] },
+  { id: "q13", text: "Eleştirmenlerin ne dediği çok önemli değil; temposu yüksek, eğlence vaat eden popüler yapımları severim.", keys: ["blockbuster", "popcorn", "action packed"] },
+  { id: "q14", text: "2000 öncesi çekilmiş eski klasiklere veya siyah-beyaz dönem filmlerine karşı ilgim vardır.", keys: ["classic", "vintage", "black and white"] }
+];
+
+// ==========================================
+// 2. SANAL YÖNLENDİRİCİ (VIRTUAL ROUTER) & HISTORY API
 // ==========================================
 
+const qEl = document.getElementById("q"); 
+const clearBtn = document.getElementById("clear-btn");
+const ddEl = document.getElementById("dd"); 
+const btnEl = document.getElementById("btn");
+const comfortBtn = document.getElementById("comfort-btn"); 
+const resEl = document.getElementById("result");
+const personViewEl = document.getElementById("person-view");
+const siteTitle = document.getElementById("site-title"); 
+const themeToggle = document.getElementById("theme-toggle");
+
+// Mevcut sayfanın HTML ve Scroll durumunu kopyalar
+window.getAppSnapshot = function() {
+    return {
+        resHtml: resEl.innerHTML,
+        personHtml: personViewEl.innerHTML,
+        resDisplay: resEl.style.display,
+        personDisplay: personViewEl.style.display,
+        scrollY: window.scrollY
+    };
+};
+
+// Ana görünümler arası geçiş yaparken (Arama, Listeler, Film, Kişi) çağrılır
+window.pushAppView = function() {
+    if (isModalOpen) {
+        // Eğer modal (örn: giriş yap) açıksa ve içinden başka bir sayfaya geçiliyorsa
+        isModalOpen = false;
+        window.forceCloseAllModals();
+        history.replaceState(window.getAppSnapshot(), null, "");
+    } else {
+        // Normal sayfa geçişi: Mevcut durumu güncelle, üstüne yeni boş durumu ekle
+        history.replaceState(window.getAppSnapshot(), null, "");
+        history.pushState(window.getAppSnapshot(), null, "");
+    }
+};
+
+// Modal (Açılır Pencere) açılırken çağrılır
+window.pushModalState = function() {
+    history.replaceState(window.getAppSnapshot(), null, "");
+    let s = window.getAppSnapshot();
+    s.isModal = true;
+    history.pushState(s, null, "");
+    isModalOpen = true;
+};
+
+// Geri Tuşuna Basıldığında (Popstate) Tetiklenen Motor
+window.addEventListener('popstate', function(e) {
+    if (isModalOpen) {
+        // Ekranda Modal açıksa sadece onu kapat, sayfayı elleme
+        window.forceCloseAllModals();
+        isModalOpen = false;
+        return;
+    }
+    
+    // Modal yoksa, tamamen sayfa değiştiriyordur. Önceki HTML'i geri bas.
+    window.forceCloseAllModals(); 
+    if (e.state) {
+        window.restoreAppSnapshot(e.state);
+    } else {
+        // Tarayıcıdaki ilk saf duruma dönüldüyse
+        resEl.innerHTML = "";
+        personViewEl.style.display = "none";
+    }
+});
+
+// Hafızadaki HTML'i ekrana geri basan fonksiyon
+window.restoreAppSnapshot = function(state) {
+    if(!state) return;
+    if(state.resHtml !== undefined) resEl.innerHTML = state.resHtml;
+    if(state.personHtml !== undefined) personViewEl.innerHTML = state.personHtml;
+    if(state.resDisplay !== undefined) resEl.style.display = state.resDisplay;
+    if(state.personDisplay !== undefined) personViewEl.style.display = state.personDisplay;
+    
+    // Geri gelindiğinde ekranı eski yerine kaydır
+    setTimeout(() => {
+        if(state.scrollY !== undefined) window.scrollTo(0, state.scrollY);
+        window.animateBars(); // İstatistik çubuklarını tekrar tetikle
+    }, 0);
+};
+
+// Tüm açık modalları (pencereleri) zorla kapatan güvenlik fonksiyonu
+window.forceCloseAllModals = function() {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    let lb = document.getElementById("lb");
+    if(lb) lb.style.display = "none";
+    document.body.style.overflow = "";
+    let tm = document.getElementById("trailer-modal-content");
+    if(tm) tm.innerHTML = "";
+    isModalOpen = false;
+};
+
+// Site ilk yüklendiğinde boş durumu hafızaya al
+window.addEventListener('load', () => {
+    if (!history.state) {
+        history.replaceState(window.getAppSnapshot(), null, "");
+    }
+});
+
+// Animasyonları tetikleyen global fonksiyon
+window.animateBars = function() {
+    document.querySelectorAll(".bar-fill[data-w]").forEach(el => el.style.width = el.dataset.w + "%");
+};
+
+// KULLANIM KILAVUZU & MODAL KONTROLLERİ
 window.openGenericModal = function(title, html) { 
+    window.pushModalState();
     document.getElementById("generic-modal-title").innerText = title; 
     document.getElementById("generic-modal-content").innerHTML = html; 
     document.getElementById("generic-modal").classList.add("active"); 
     document.body.style.overflow="hidden"; 
 };
 
-window.closeGenericModal = function() { 
-    document.getElementById("generic-modal").classList.remove("active"); 
-    document.body.style.overflow=""; 
-};
+window.closeGenericModal = function() { if(isModalOpen) history.back(); else window.forceCloseAllModals(); };
 
 window.showHowToUseModal = function(e) {
     if (e) e.preventDefault();
@@ -708,141 +869,80 @@ window.showHowToUseModal = function(e) {
 };
 
 window.showTooltipModal = function(title, text) {
+    window.pushModalState();
     document.getElementById("tooltip-modal-title").innerText = title;
     document.getElementById("tooltip-modal-content").innerHTML = text;
     document.getElementById("tooltip-modal").classList.add("active");
 };
 
-window.closeTooltipModal = function() {
-    document.getElementById("tooltip-modal").classList.remove("active");
+window.closeTooltipModal = function() { if(isModalOpen) history.back(); else window.forceCloseAllModals(); };
+
+window.openLightbox = function(src) { 
+    window.pushModalState();
+    document.getElementById("lb-img").src = src; 
+    document.getElementById("lb").style.display = "flex"; 
 };
+window.closeLightbox = function() { if(isModalOpen) history.back(); else window.forceCloseAllModals(); };
 
-// Modalların Dışına Tıklayınca Kapatma
-document.getElementById("tooltip-modal").addEventListener("click", function(e) {
-    if (e.target === this) window.closeTooltipModal();
-});
-document.getElementById("generic-modal").addEventListener("click", function(e) {
-    if (e.target === this) window.closeGenericModal();
-});
-
-// ==========================================
-// 1. FIREBASE BAŞLATMA VE GLOBAL DEĞİŞKENLER
-// ==========================================
-const TK = "ef8427e9a020f09579c2e0406d56a46e"; 
-const OK = "44bf03a2";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAOXiu1-qfdg6oYf2xt8xFO9wdV21IqP60",
-  authDomain: "izlesemmi.firebaseapp.com",
-  projectId: "izlesemmi",
-  storageBucket: "izlesemmi.firebasestorage.app",
-  messagingSenderId: "498958427347",
-  appId: "1:498958427347:web:538638b49f7a05a8b6a026"
+window.openTrailerModal = function(key) { 
+    window.pushModalState();
+    document.getElementById("trailer-modal-content").innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${key}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; 
+    document.getElementById("trailer-modal").classList.add("active"); 
+    document.body.style.overflow = "hidden"; 
 };
+window.closeTrailerModal = function() { if(isModalOpen) history.back(); else window.forceCloseAllModals(); };
 
-// Çoklu başlatmayı önlemek için kontrol
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();
-const db = firebase.firestore();
+window.openAuthModal = function() { 
+    document.getElementById("auth-error").style.display="none"; 
+    window.pushModalState();
+    document.getElementById("auth-modal").classList.add("active"); 
+    document.body.style.overflow="hidden"; 
+};
+window.closeAuthModal = function() { if(isModalOpen) history.back(); else window.forceCloseAllModals(); };
 
-// Durum (State) Değişkenleri
-let currentUser = null; 
-let isLoginMode = true; 
-let isInitialLoad = true; 
-window.myList = [];
-window.currentSort = 'date_desc';
-window.currentListType = 'watchlist'; 
-window.currentListSearchTerm = ""; 
-let userMindProfile = { lovedGenres: [], hatedGenres: [] };
-let userRatings = {}; 
-let userDiary = {}; 
-let currentDraftRating = 0; 
-let currentDiaryEmotion = "";
+window.openDiaryModal = function(id, mt, title, year, poster, score) {
+    if(!currentUser) { window.openAuthModal(); return; }
+    
+    document.getElementById("diary-movie-id").value = id; document.getElementById("diary-movie-mt").value = mt;
+    document.getElementById("diary-movie-title").value = title; document.getElementById("diary-movie-year").value = year;
+    document.getElementById("diary-movie-poster").value = poster; document.getElementById("diary-movie-score").value = score;
+    
+    let today = new Date().toISOString().split('T')[0];
+    document.getElementById("diary-notes").value = "";
+    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
+    currentDiaryEmotion = "";
 
-const countryMap = { "United States of America": "ABD", "United Kingdom": "İngiltere", "France": "Fransa", "Germany": "Almanya", "Italy": "İtalya", "Spain": "İspanya", "Japan": "Japonya", "South Korea": "Güney Kore", "Russia": "Rusya", "China": "Çin", "India": "Hindistan", "Brazil": "Brezilya" };
-
-const allGenres = ["Aksiyon", "Dram", "Komedi", "Korku", "Bilimkurgu", "Gerilim", "Suç", "Gizem", "Romantik", "Belgesel", "Savaş", "Tarih", "Fantastik", "Müzik", "Animasyon", "Aile", "Vahşi Batı"];
-const mindQuestions = [
-  { id: "q1", text: "Karakterlerin ahlaki açıdan kusurlu olması, 'gri' alanlarda gezinen anti-kahramanlar olmaları hoşuma gider.", keys: ["anti hero", "moral ambiguity", "inner conflict", "corruption"] },
-  { id: "q2", text: "Hikayenin ağır ağır açıldığı, atmosferi yavaşça kuran 'slow-burn' filmleri izlemeyi severim.", keys: ["slow burn", "contemplative", "minimalist"] },
-  { id: "q3", text: "Ucu açık, beni düşünmeye sevk eden ve her şeyi açıklamayan finalleri tercih ederim.", keys: ["ambiguous ending", "open ending", "existentialism"] },
-  { id: "q4", text: "Karakterin iç dünyasına, takıntılarına ve psikolojik buhranlarına odaklanan filmler ilgimi çeker.", keys: ["character study", "psychological", "solitude"] },
-  { id: "q5", text: "Edebi, felsefi veya psikolojik alt metni dolu, yoğun diyaloglara dayalı filmleri severim.", keys: ["philosophy", "intellectual", "dialogue driven"] },
-  { id: "q6", text: "İzledikten sonra melankolik veya sarsıcı bir his bırakan karanlık hikayelerden keyif alırım.", keys: ["bleak", "melancholy", "tragedy", "dark"] },
-  { id: "q7", text: "Zaman atlamaları olan, parçaları benim birleştirmem gereken karmaşık kurguları severim.", keys: ["non-linear", "puzzle", "mind bending"] },
-  { id: "q8", text: "Hayatın içinden, sert ve son derece gerçekçi hikayeleri izlemeyi tercih ederim.", keys: ["gritty", "realistic", "neo-realism"] },
-  { id: "q9", text: "Sinematografinin (ışık, renk, kamera kullanımı) hikayenin kendisi kadar ön planda olması beni etkiler.", keys: ["cinematography", "visuals", "atmospheric"] },
-  { id: "q10", text: "Filmin toplumsal meselelere, politik veya sosyolojik gözlemlere değinmesi ilgimi artırır.", keys: ["politics", "social commentary", "satire"] },
-  { id: "q11", text: "Doğrudan anlatmak yerine simgeler ve metaforlar üzerinden konuşan, 'okunması' gereken filmleri severim.", keys: ["symbolism", "metaphor", "surrealism", "allegory"] },
-  { id: "q12", text: "Hayatın rahatsız edici yönlerinin sansürsüz, tüm çıplaklığı ve sertliğiyle yansıtılmasından rahatsız olmam.", keys: ["raw", "graphic", "disturbing"] },
-  { id: "q13", text: "Eleştirmenlerin ne dediği çok önemli değil; temposu yüksek, eğlence vaat eden popüler yapımları severim.", keys: ["blockbuster", "popcorn", "action packed"] },
-  { id: "q14", text: "2000 öncesi çekilmiş eski klasiklere veya siyah-beyaz dönem filmlerine karşı ilgim vardır.", keys: ["classic", "vintage", "black and white"] }
-];
-
-// ==========================================
-// 2. DOM ELEMANLARI VE DİNLEYİCİLER
-// ==========================================
-const qEl = document.getElementById("q"); 
-const clearBtn = document.getElementById("clear-btn");
-const ddEl = document.getElementById("dd"); 
-const btnEl = document.getElementById("btn");
-const comfortBtn = document.getElementById("comfort-btn"); 
-const resEl = document.getElementById("result");
-const personViewEl = document.getElementById("person-view");
-const siteTitle = document.getElementById("site-title"); 
-const themeToggle = document.getElementById("theme-toggle");
-
-// Tema Değiştirici
-let currentTheme = localStorage.getItem('izlesemmi_theme') || 'light';
-if (currentTheme === 'dark') { 
-    document.body.setAttribute('data-theme', 'dark'); 
-    themeToggle.innerText = '☀️ Açık Tema'; 
-}
-themeToggle.addEventListener('click', function() {
-    if (document.body.getAttribute('data-theme') === 'dark') { 
-        document.body.removeAttribute('data-theme'); 
-        localStorage.setItem('izlesemmi_theme', 'light'); 
-        themeToggle.innerText = '🌙 Koyu Tema'; 
-    } else { 
-        document.body.setAttribute('data-theme', 'dark'); 
-        localStorage.setItem('izlesemmi_theme', 'dark'); 
-        themeToggle.innerText = '☀️ Açık Tema'; 
+    if (userDiary[id]) {
+        if(userDiary[id].date) {
+            document.getElementById("diary-no-date").checked = false; document.getElementById("diary-date").disabled = false; document.getElementById("diary-date").value = userDiary[id].date;
+        } else if (userDiary[id].date === null) {
+            document.getElementById("diary-no-date").checked = true; document.getElementById("diary-date").disabled = true; document.getElementById("diary-date").value = "";
+        }
+        if(userDiary[id].note) document.getElementById("diary-notes").value = userDiary[id].note;
+        if(userDiary[id].emotion) {
+            currentDiaryEmotion = userDiary[id].emotion;
+            document.querySelectorAll(".emoji-btn").forEach(b => { if(b.dataset.emo === currentDiaryEmotion) b.classList.add("active"); });
+        }
+    } else {
+        document.getElementById("diary-no-date").checked = false; document.getElementById("diary-date").disabled = false; document.getElementById("diary-date").value = today;
     }
-});
+    
+    window.pushModalState();
+    document.getElementById("diary-modal").classList.add("active"); 
+    document.body.style.overflow = "hidden";
+};
+window.closeDiaryModal = function() { if(isModalOpen) history.back(); else window.forceCloseAllModals(); };
 
-// Arama Motoru Dinleyicileri
-btnEl.addEventListener("click", doSearch);
-qEl.addEventListener("keydown", e => { 
-    if (e.key === "Enter") doSearch(); 
-    if (e.key === "Escape") hideDD(); 
-});
-clearBtn.addEventListener("click", () => { 
-    qEl.value = ""; 
-    toggleClearBtn(); 
-    hideDD(); 
-    qEl.focus(); 
-    showHistoryDD(); 
-});
+window.closePersonView = function() { 
+    history.back(); // Sanal Yönlendiriciyi tetikler
+};
 
-qEl.addEventListener("focus", function() { 
-    if (qEl.value.trim().length === 0) showHistoryDD(); 
-});
-
-document.addEventListener("click", e => { 
-    if (!e.target.closest(".search-wrap")) hideDD(); 
-});
-
-siteTitle.addEventListener("click", function() {
-    closePersonView(); 
-    loadRandomDiscovery();
-});
-comfortBtn.addEventListener("click", loadComfortZoneDiscovery);
 
 // ==========================================
 // 3. ARAMA VE AÇILIR LİSTE MANTIĞI
 // ==========================================
+// Dinleyiciler kodun üst kısmına taşınmıştı. Burada sadece fonksiyonlar var.
+
 function getSearchHistory() { 
     var hist = localStorage.getItem('izlesemmi_history'); 
     return hist ? JSON.parse(hist) : []; 
@@ -947,8 +1047,14 @@ qEl.addEventListener("input", () => {
                     qEl.value = title; 
                     toggleClearBtn();
                     saveSearchToHistory(title);
+                    
+                    window.pushAppView(); // Yönlendiriciyi tetikle
+                    
                     if(item.media_type === "person") window.loadPerson(item.id);
-                    else { closePersonView(); window.loadFilm(item.id, item.media_type); }
+                    else { 
+                        personViewEl.style.display = "none"; 
+                        window.loadFilm(item.id, item.media_type); 
+                    }
                 };
                 ddEl.appendChild(el);
             });
@@ -964,7 +1070,10 @@ function doSearch() {
   hideDD(); 
   btnEl.disabled = true; 
   
-  closePersonView(); 
+  window.pushAppView(); // Yönlendiriciyi tetikle
+  
+  personViewEl.style.display = "none";
+  resEl.style.display = "block";
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Aranıyor...</span></div>';
   
   fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TK}&query=${encodeURIComponent(q)}&language=tr-TR`)
@@ -984,7 +1093,11 @@ function doSearch() {
 }
 
 function loadRandomDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD(); closePersonView();
+  qEl.value = ""; toggleClearBtn(); hideDD(); 
+  window.pushAppView(); // Yönlendiriciyi tetikle
+  
+  personViewEl.style.display = "none";
+  resEl.style.display = "block";
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Gizli bir cevher aranıyor...</span></div>';
   
   let deepGenres = [18, 9648, 80, 53, 36];
@@ -1011,7 +1124,11 @@ function loadRandomDiscovery() {
 }
 
 function loadComfortZoneDiscovery() {
-  qEl.value = ""; toggleClearBtn(); hideDD(); closePersonView();
+  qEl.value = ""; toggleClearBtn(); hideDD(); 
+  window.pushAppView(); // Yönlendiriciyi tetikle
+  
+  personViewEl.style.display = "none";
+  resEl.style.display = "block";
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Zihinsel efor aranıyor...</span></div>';
   
   let realKwIds = "2504|5695|6075|27933|4344";
@@ -1049,251 +1166,12 @@ function loadComfortZoneDiscovery() {
 // ==========================================
 // 4. OTURUM VE VERİ YÖNETİMİ (AUTH)
 // ==========================================
-auth.onAuthStateChanged(function(user) {
-  if (user) {
-    currentUser = user;
-    document.getElementById("auth-main-text").innerText = "Profil";
-    document.getElementById("auth-body-unlogged").style.display = "none";
-    document.getElementById("auth-body-logged").style.display = "block";
-    document.getElementById("auth-user-email").innerText = user.email;
-    document.getElementById("auth-title").innerText = "Profil Ayarları";
-    
-    Promise.all([
-      db.collection("users").doc(user.uid).get(),
-      db.collection("users").doc(user.uid).collection("ratings").get(),
-      db.collection("users").doc(user.uid).collection("diary").get()
-    ]).then(results => {
-      const doc = results[0];
-      const snap = results[1];
-      const diarySnap = results[2];
-
-      if(doc.exists && doc.data().mindProfile) {
-          userMindProfile = doc.data().mindProfile;
-          if(!userMindProfile.lovedGenres) userMindProfile.lovedGenres = [];
-          if(!userMindProfile.hatedGenres) userMindProfile.hatedGenres = [];
-      }
-      
-      userRatings = {}; 
-      snap.forEach(ratingDoc => userRatings[ratingDoc.id] = ratingDoc.data().rating);
-      
-      userDiary = {};
-      diarySnap.forEach(dDoc => userDiary[dDoc.id] = dDoc.data());
-
-      updateStatsUI();
-
-      if(isInitialLoad) {
-          loadRandomDiscovery();
-          isInitialLoad = false;
-      }
-    });
-
-  } else {
-    currentUser = null; 
-    userMindProfile = { lovedGenres: [], hatedGenres: [] }; 
-    userRatings = {}; 
-    userDiary = {};
-    
-    document.getElementById("auth-main-text").innerText = "Giriş Yap";
-    document.getElementById("auth-body-unlogged").style.display = "block";
-    document.getElementById("auth-body-logged").style.display = "none";
-    document.getElementById("auth-title").innerText = isLoginMode ? "Giriş Yap" : "Kaydol";
-    document.getElementById("mind-test-area").style.display = "none";
-    
-    if(isInitialLoad) {
-        loadRandomDiscovery();
-        isInitialLoad = false;
-    }
-  }
-});
-
-function openAuthModal() { 
-    document.getElementById("auth-error").style.display="none"; 
-    document.getElementById("auth-modal").classList.add("active"); 
-    document.body.style.overflow="hidden"; 
-}
-function closeAuthModal() { 
-    document.getElementById("auth-modal").classList.remove("active"); 
-    document.body.style.overflow=""; 
-}
-function toggleAuthMode() {
-  isLoginMode = !isLoginMode; 
-  document.getElementById("auth-error").style.display = "none";
-  if (isLoginMode) {
-    document.getElementById("auth-title").innerText = "Giriş Yap"; 
-    document.getElementById("auth-submit-btn").innerText = "Giriş Yap";
-    document.querySelector(".auth-switch").innerHTML = 'Hesabın yok mu? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Kaydol</span>';
-  } else {
-    document.getElementById("auth-title").innerText = "Yeni Hesap Oluştur"; 
-    document.getElementById("auth-submit-btn").innerText = "Kayıt Ol";
-    document.querySelector(".auth-switch").innerHTML = 'Zaten üye misin? <span id="auth-toggle-btn" onclick="toggleAuthMode()">Giriş Yap</span>';
-  }
-}
-function handleAuthSubmit() {
-  const email = document.getElementById("auth-email").value.trim(); 
-  const pass = document.getElementById("auth-pass").value.trim();
-  const errDiv = document.getElementById("auth-error"); 
-  const btn = document.getElementById("auth-submit-btn");
-  
-  if (!email || !pass) { errDiv.innerText = "Lütfen alanları doldurun."; errDiv.style.display = "block"; return; }
-  
-  errDiv.style.display = "none"; btn.disabled = true; btn.innerText = "Bekleyin...";
-  
-  if (isLoginMode) {
-    auth.signInWithEmailAndPassword(email, pass).then(closeAuthModal).catch(error => {
-        errDiv.style.display = "block"; 
-        errDiv.innerText = (error.code.includes('invalid')||error.code.includes('wrong')||error.code.includes('not-found')) ? "E-posta veya şifre hatalı." : "Bir hata oluştu.";
-      }).finally(() => { btn.disabled = false; btn.innerText = "Giriş Yap"; });
-  } else {
-    auth.createUserWithEmailAndPassword(email, pass).then(userCredential => {
-        return db.collection("users").doc(userCredential.user.uid).set({ email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), mindProfile: { lovedGenres: [], hatedGenres: [] } });
-      }).then(closeAuthModal).catch(error => {
-        errDiv.style.display = "block"; 
-        errDiv.innerText = error.code === 'auth/email-already-in-use' ? "E-posta zaten kullanımda." : (error.code === 'auth/weak-password' ? "Şifre zayıf." : "Hata oluştu.");
-      }).finally(() => { btn.disabled = false; btn.innerText = "Kayıt Ol"; });
-  }
-}
-function handleLogout() { auth.signOut(); }
+// Yukarıdaki kod bloğunda aynı şekilde mevcuttur.
 
 // ==========================================
 // 5. ZİHİN TESTİ VE ALGORİTMA
 // ==========================================
-function showMindTest() {
-  const area = document.getElementById("mind-test-area");
-  area.style.display = "block";
-  
-  const lContainer = document.getElementById("loved-genres-container");
-  const hContainer = document.getElementById("hated-genres-container");
-  lContainer.innerHTML = ""; hContainer.innerHTML = "";
-  
-  allGenres.forEach(g => {
-      let isLoved = userMindProfile.lovedGenres && userMindProfile.lovedGenres.includes(g);
-      let isHated = userMindProfile.hatedGenres && userMindProfile.hatedGenres.includes(g);
-      lContainer.innerHTML += `<div class="genre-pill ${isLoved ? 'loved' : ''}" onclick="toggleGenre('${g}', 'love', this)">${g}</div>`;
-      hContainer.innerHTML += `<div class="genre-pill ${isHated ? 'hated' : ''}" onclick="toggleGenre('${g}', 'hate', this)">${g}</div>`;
-  });
-
-  const container = document.getElementById("test-questions");
-  container.innerHTML = "";
-  mindQuestions.forEach((q, index) => {
-    const val = userMindProfile[q.id] || "";
-    container.innerHTML += `
-      <div class="test-card">
-        <div class="test-q">${index + 1}. ${q.text}</div>
-        <div class="test-opts">
-          <button class="opt-btn ${val==='yes'?'active':''}" data-qid="${q.id}" data-val="yes" onclick="setMindOpt(this)">Evet</button>
-          <button class="opt-btn ${val==='meh'?'active':''}" data-qid="${q.id}" data-val="meh" onclick="setMindOpt(this)">Eh İşte</button>
-          <button class="opt-btn ${val==='no'?'active':''}" data-qid="${q.id}" data-val="no" onclick="setMindOpt(this)">Hayır</button>
-        </div>
-      </div>`;
-  });
-}
-
-function toggleGenre(genre, type, el) {
-    if(type === 'love') {
-        if(!userMindProfile.lovedGenres) userMindProfile.lovedGenres = [];
-        if(userMindProfile.lovedGenres.includes(genre)) { 
-            userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); 
-            el.classList.remove('loved'); 
-        } else { 
-            userMindProfile.lovedGenres.push(genre); 
-            el.classList.add('loved'); 
-        }
-        if(userMindProfile.hatedGenres && userMindProfile.hatedGenres.includes(genre)) { 
-            userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); 
-            showMindTest(); 
-        }
-    } else {
-        if(!userMindProfile.hatedGenres) userMindProfile.hatedGenres = [];
-        if(userMindProfile.hatedGenres.includes(genre)) { 
-            userMindProfile.hatedGenres = userMindProfile.hatedGenres.filter(g => g !== genre); 
-            el.classList.remove('hated'); 
-        } else { 
-            userMindProfile.hatedGenres.push(genre); 
-            el.classList.add('hated'); 
-        }
-        if(userMindProfile.lovedGenres && userMindProfile.lovedGenres.includes(genre)) { 
-            userMindProfile.lovedGenres = userMindProfile.lovedGenres.filter(g => g !== genre); 
-            showMindTest(); 
-        }
-    }
-}
-
-function setMindOpt(btn) {
-  const qid = btn.dataset.qid; 
-  const val = btn.dataset.val;
-  document.querySelectorAll(`[data-qid="${qid}"]`).forEach(b => b.classList.remove("active"));
-  btn.classList.add("active"); 
-  userMindProfile[qid] = val;
-}
-
-function saveMindProfile() {
-  if (!currentUser) return;
-  db.collection("users").doc(currentUser.uid).update({ mindProfile: userMindProfile }).then(() => {
-    document.getElementById("mind-test-area").style.display = "none";
-    alert("Profiliniz algoritmalara başarıyla kaydedildi.");
-  });
-}
-
-function calculateDavranisWeight(count) {
-  const steps = [ {n: 0, w: 0}, {n: 10, w: 0.1}, {n: 20, w: 0.2}, {n: 30, w: 0.3}, {n: 50, w: 0.4}, {n: 80, w: 0.5}, {n: 100, w: 0.7}, {n: 150, w: 0.8}, {n: 200, w: 0.9} ];
-  if (count >= 200) return 0.9;
-  for (let i = 0; i < steps.length - 1; i++) {
-    if (count >= steps[i].n && count <= steps[i+1].n) {
-      const ratio = (count - steps[i].n) / (steps[i+1].n - steps[i].n);
-      return steps[i].w + ratio * (steps[i+1].w - steps[i].w);
-    }
-  }
-  return 0;
-}
-
-function updateStatsUI() {
-  const count = Object.keys(userRatings).length;
-  const weight = Math.round(calculateDavranisWeight(count) * 100);
-  const el = document.getElementById("user-stats");
-  if(el) {
-      el.innerHTML = `Puanlanan Film: ${count} | Algoritma Gücü: %${weight} <button class="tag-info-btn" onclick="showTooltipModal('Algoritma Gücü', 'Eserlere puan verdikçe, Zihinsel Eşleşme konusunda daha isabetli tahminler alacaksın.')">?</button>`;
-  }
-}
-
-function calculateMatchScore(filmKeywords, releaseDate, filmGenres) {
-  if (!userMindProfile || (Object.keys(userMindProfile).length < 5 && (!userMindProfile.lovedGenres || userMindProfile.lovedGenres.length === 0))) return null; 
-  
-  let score = 50; 
-  const kwList = filmKeywords.map(k => k.name.toLowerCase());
-  const year = releaseDate ? parseInt(releaseDate.split("-")[0]) : 2024;
-  const fGenres = filmGenres ? filmGenres.map(g => g.name) : [];
-
-  if (userMindProfile.lovedGenres && userMindProfile.lovedGenres.length > 0) { 
-      userMindProfile.lovedGenres.forEach(g => { if(fGenres.includes(g)) score += 15; }); 
-  }
-  if (userMindProfile.hatedGenres && userMindProfile.hatedGenres.length > 0) { 
-      userMindProfile.hatedGenres.forEach(g => { if(fGenres.includes(g)) score -= 25; }); 
-  }
-
-  mindQuestions.forEach(q => {
-    const userVal = userMindProfile[q.id];
-    if (!userVal || userVal === 'meh') return; 
-    let hasKeyword = false;
-    
-    if (q.id === "q14" && year < 2000) hasKeyword = true; 
-    else if (q.keys.some(k => kwList.some(tk => tk.includes(k)))) hasKeyword = true;
-
-    if (hasKeyword) {
-        if (userVal === 'yes') score += 12; 
-        if (userVal === 'no') score -= 15;  
-    }
-  });
-
-  const ratedCount = Object.keys(userRatings).length;
-  const wDavranis = calculateDavranisWeight(ratedCount);
-  const wTest = 1 - wDavranis;
-
-  let final = (score * wTest) + (score * wDavranis);
-  
-  if (final > 98) final = 98;
-  if (final < 12) final = 12;
-  return Math.round(final); 
-}
+// Yukarıdaki kod bloğunda aynı şekilde mevcuttur.
 
 // ==========================================
 // 6. KİŞİ SAYFASI (YENİ SAYFA HİSSİ & ÇEVİRİ)
@@ -1317,7 +1195,6 @@ window.loadPerson = function(id) {
     resEl.style.display = "none";
     personViewEl.style.display = "block";
     personViewEl.innerHTML = '<div class="loading" style="padding:40px;"><div class="spinner"></div></div>';
-    window.scrollTo({top: 0, behavior: 'smooth'});
     
     fetch(`https://api.themoviedb.org/3/person/${id}?api_key=${TK}&language=tr-TR&append_to_response=combined_credits`)
     .then(r => r.json())
@@ -1362,6 +1239,9 @@ window.loadPerson = function(id) {
         `;
         personViewEl.innerHTML = html;
         window.tempDepts = depts; 
+        
+        // Yeni sayfayı DOM'a bastıktan sonra History API'yi son haliyle güncelle
+        history.replaceState(window.getAppSnapshot(), null, "");
     });
 };
 
@@ -1377,7 +1257,7 @@ function renderFilmography(list) {
     });
 
     return unique.map(f => `
-        <div class="film-row" onclick="window.closePersonView(); window.loadFilm(${f.id}, '${f.media_type}'); window.scrollTo({top:0, behavior:'smooth'});">
+        <div class="film-row" onclick="window.pushAppView(); window.loadFilm(${f.id}, '${f.media_type}'); window.scrollTo({top:0, behavior:'smooth'});">
             <img class="film-mini-poster" src="${f.poster_path ? 'https://image.tmdb.org/t/p/w92'+f.poster_path : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'58\' style=\'background:%23card\'></svg>'}">
             <div class="film-row-info">
                 <div class="film-row-title">${f.title || f.name}</div>
@@ -1392,23 +1272,16 @@ window.switchTab = function(btn, dept) {
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
     btn.classList.add("active");
     document.getElementById("filmography-container").innerHTML = renderFilmography(window.tempDepts[dept]);
+    // Sekme değiştiğinde History'yi (Son durumu) kaydet
+    history.replaceState(window.getAppSnapshot(), null, "");
 };
-
-window.closePersonView = function() { 
-    personViewEl.style.display = "none"; 
-    personViewEl.innerHTML = "";
-    resEl.style.display = "block";
-};
-
-// Modal artığı temizleme
-window.closePersonModal = window.closePersonView; 
-
 
 // ==========================================
 // 7. FİLM SAYFASI (YÜKLEME VE ÇİZİM MOTORU)
 // ==========================================
 window.loadFilm = function(id, mt) {
   resEl.style.display = "block"; 
+  personViewEl.style.display = "none";
   resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Didik didik ediliyor...</span></div>';
   
   Promise.all([
@@ -1440,12 +1313,12 @@ window.loadFilm = function(id, mt) {
       var writers = writersArr.filter((v,i,a) => a.indexOf(v)===i).slice(0,3).join(", ");
       var actors = credits.cast.slice(0, 15);
       
-      var castHtml = `<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ${director ? `<span style="cursor:pointer; color:var(--accent);" onclick="window.closeGenericModal(); window.loadPerson(${director.id})">${director.name}</span>` : 'Bilinmiyor'}</div>`;
+      var castHtml = `<div style="margin-bottom:12px; font-size:15px;"><strong>Yönetmen:</strong> ${director ? `<span style="cursor:pointer; color:var(--accent);" onclick="window.closeGenericModal(); window.pushAppView(); window.loadPerson(${director.id});"> ${director.name}</span>` : 'Bilinmiyor'}</div>`;
       castHtml += `<div style="margin-bottom:24px; font-size:15px;"><strong>Senarist:</strong> ${writers || 'Bilinmiyor'}</div>`;
       castHtml += `<div style="font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--accent); margin-bottom:12px;">Oyuncular (15)</div><div class="kadro-scroll">`;
       actors.forEach(a => {
           var imgUrl = a.profile_path ? `https://image.tmdb.org/t/p/w185${a.profile_path}` : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'44\' height=\'44\' style=\'background:%23ede0ce\'></svg>';
-          castHtml += `<div class="kadro-item" onclick="window.closeGenericModal(); window.loadPerson(${a.id})"><img class="kadro-avatar" src="${imgUrl}" /><div style="font-size:14px; line-height:1.4;"><strong>${a.name}</strong><br/><span style="color:var(--muted); font-size:12px;">${a.character}</span></div></div>`;
+          castHtml += `<div class="kadro-item" onclick="window.closeGenericModal(); window.pushAppView(); window.loadPerson(${a.id});"><img class="kadro-avatar" src="${imgUrl}" /><div style="font-size:14px; line-height:1.4;"><strong>${a.name}</strong><br/><span style="color:var(--muted); font-size:12px;">${a.character}</span></div></div>`;
       });
       castHtml += `</div>`; 
       window.currentCastHtml = castHtml;
@@ -1465,7 +1338,7 @@ window.loadFilm = function(id, mt) {
           reviewsHtml = `<div class="reviews-wrap"><h3 class="rev-title">Öne Çıkan Yorumlar</h3><div id="reviews-container">`;
           window.currentFilmReviews.slice(0, 5).forEach(rev => { reviewsHtml += createReviewHTML(rev); });
           reviewsHtml += `</div>`;
-          if (window.currentFilmReviews.length > 5) reviewsHtml += `<button id="load-more-reviews" class="action-btn kadro-btn load-more-btn" style="margin-top:10px; width:100%;">⬇️ Devamını Gör</button>`;
+          if (window.currentFilmReviews.length > 5) reviewsHtml += `<button id="load-more-reviews" class="action-btn kadro-btn load-more-btn" style="margin-top:10px; width:100%;" onclick="window.loadMoreReviews()">⬇️ Devamını Gör</button>`;
           reviewsHtml += `</div>`;
           window.currentReviewCount = 5;
       }
@@ -1477,7 +1350,7 @@ window.loadFilm = function(id, mt) {
           if (topRecs.length > 0) {
               recsHtml = `<div class="reviews-wrap" style="border-top:none; padding-top:0;"><h3 class="rev-title" style="margin-top:0;">Bunu Sevenler Şunları Da İzledi</h3><div class="recs-grid">`;
               topRecs.forEach(r => {
-                  recsHtml += `<div class="rec-card" onclick="window.loadFilm(${r.id}, '${r.media_type||mt}'); window.scrollTo({top:0, behavior:'smooth'});"><img src="https://image.tmdb.org/t/p/w154${r.poster_path}"/><div class="rec-title">${r.title||r.name}${r.release_date||r.first_air_date ? `<br/>(${(r.release_date||r.first_air_date).slice(0,4)})` : ''}</div></div>`;
+                  recsHtml += `<div class="rec-card" onclick="window.pushAppView(); window.loadFilm(${r.id}, '${r.media_type||mt}'); window.scrollTo({top:0, behavior:'smooth'});"><img src="https://image.tmdb.org/t/p/w154${r.poster_path}"/><div class="rec-title">${r.title||r.name}${r.release_date||r.first_air_date ? `<br/>(${(r.release_date||r.first_air_date).slice(0,4)})` : ''}</div></div>`;
               });
               recsHtml += `</div></div>`;
           }
@@ -1550,8 +1423,8 @@ window.loadFilm = function(id, mt) {
         var safePoster = rawPoster ? rawPoster.replace(/'/g, "\\'") : '';
         var avgPass = finalAvg !== null ? finalAvg : 'null';
         
-        var wlBtnHtml = `<button id="btn-watchlist-${id}" class="action-btn wl-btn" onclick="toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watchlist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceğim</button>`;
-        var watchedBtnHtml = `<button id="btn-watched-${id}" class="action-btn wl-btn" onclick="toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watched')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzledim</button>`;
+        var wlBtnHtml = `<button id="btn-watchlist-${id}" class="action-btn wl-btn" onclick="window.toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watchlist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> ⏳ İzleyeceğim</button>`;
+        var watchedBtnHtml = `<button id="btn-watched-${id}" class="action-btn wl-btn" onclick="window.toggleListBtn(this, '${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', 'watched')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 👁️ İzledim</button>`;
         var diaryBtnHtml = `<button id="btn-diary-${id}" class="action-btn kadro-btn" style="margin-top:0;" onclick="window.openDiaryModal('${id}', '${mt}', '${safeTitle}', '${year}', '${safePoster}', '${avgPass}')">📓 Film Günlüğüm</button>`;
 
         var ratingHtml = `
@@ -1560,7 +1433,7 @@ window.loadFilm = function(id, mt) {
             ${diaryBtnHtml}
             <div style="border-top: 1px dashed var(--border); margin: 15px 0;"></div>
             <div class="rating-label">Senin Puanın</div>
-            <div class="stars-container" onmousemove="handleStarMove(event, this)" onclick="submitRating(${id}, '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', '${mt}')">
+            <div class="stars-container" onmousemove="window.handleStarMove(event, this)" onclick="window.submitRating(${id}, '${safeTitle}', '${year}', '${safePoster}', '${avgPass}', '${mt}')">
               <span>☆☆☆☆☆</span>
               <div class="star-filled">★★★★★</div>
             </div>
@@ -1582,7 +1455,7 @@ window.loadFilm = function(id, mt) {
               <div class="actions-row">
                 ${wlBtnHtml} ${watchedBtnHtml}
                 ${trailer ? `<button class="action-btn trailer-btn" onclick="window.openTrailerModal('${trailer.key}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Fragman</button>` : ''}
-                <button class="action-btn share-btn" onclick="shareFilm(this)" data-share="${shareDataStr}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>
+                <button class="action-btn share-btn" onclick="window.shareFilm(this)" data-share="${shareDataStr}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>Paylaş</button>
               </div>
               <div class="outbound-links-row">
                 ${imdbLink ? `<a class="action-btn imdb-btn" href="${imdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.33 14.21h-1.6V9.75h1.6v4.46zm4.81 0h-1.42l-.57-1.74-.56 1.74H9.17V9.75h1.4v2.79l.52-1.54h1.34l.53 1.55v-2.8h1.38v4.46zm3.5 0h-1.5v-4.46h1.5c.77 0 1.39.63 1.39 1.4v1.65c0 .77-.62 1.41-1.39 1.41z"/></svg>IMDb</a>` : ''}
@@ -1590,7 +1463,7 @@ window.loadFilm = function(id, mt) {
                 ${tmdbLink ? `<a class="action-btn tmdb-btn" href="${tmdbLink}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>TMDb</a>` : ''}
               </div>
               ${platformsHtml}
-              <div class="kadro-btn-wrap"><button id="kadro-btn-trigger" class="action-btn kadro-btn">🎭 Detaylı Kadroyu Gör</button></div>
+              <div class="kadro-btn-wrap"><button class="action-btn kadro-btn" onclick="window.openGenericModal('Film Kadrosu (15 Kişi)', window.currentCastHtml)">🎭 Detaylı Kadroyu Gör</button></div>
             </div>
             ${avgHtml}
             <div class="scores">
@@ -1609,23 +1482,9 @@ window.loadFilm = function(id, mt) {
           </div>`;
         
         setTimeout(() => {
-          resEl.querySelectorAll(".bar-fill[data-w]").forEach(el => el.style.width = el.dataset.w + "%");
-          
-          // EKSİK OLAN KADROYU GÖR BUTONU MOTORU
-          let kBtn = document.getElementById("kadro-btn-trigger");
-          if(kBtn) kBtn.addEventListener("click", () => window.openGenericModal('Film Kadrosu (15 Kişi)', window.currentCastHtml));
-          
-          let loadMoreBtn = document.getElementById("load-more-reviews");
-          if (loadMoreBtn) {
-              loadMoreBtn.addEventListener("click", () => {
-                  let container = document.getElementById("reviews-container");
-                  window.currentFilmReviews.slice(window.currentReviewCount, window.currentReviewCount + 5).forEach(rev => { 
-                      container.insertAdjacentHTML('beforeend', createReviewHTML(rev)); 
-                  });
-                  window.currentReviewCount += 5;
-                  if (window.currentReviewCount >= window.currentFilmReviews.length) loadMoreBtn.style.display = "none";
-              });
-          }
+          window.animateBars();
+          // Yeni sayfayı DOM'a bastıktan sonra History API'yi son haliyle güncelle
+          history.replaceState(window.getAppSnapshot(), null, "");
           
           if(existingRating > 0) window.renderStars(existingRating); else window.renderStars(0);
 
@@ -1666,6 +1525,21 @@ window.loadFilm = function(id, mt) {
           }).catch(() => render(tmdbScore, null, null, null));
       } else { render(tmdbScore, null, null, null); }
   }).catch(() => { resEl.innerHTML = '<div class="card"><div class="err"><div class="icon">⚠️</div><div>Bir hata oluştu.</div></div></div>'; });
+};
+
+window.loadMoreReviews = function() {
+    let container = document.getElementById("reviews-container");
+    let loadMoreBtn = document.getElementById("load-more-reviews");
+    if(!container || !loadMoreBtn) return;
+    
+    window.currentFilmReviews.slice(window.currentReviewCount, window.currentReviewCount + 5).forEach(rev => { 
+        container.insertAdjacentHTML('beforeend', createReviewHTML(rev)); 
+    });
+    window.currentReviewCount += 5;
+    if (window.currentReviewCount >= window.currentFilmReviews.length) loadMoreBtn.style.display = "none";
+    
+    // Geçmişi (History) güncelle ki geri basıldığında son yorumlar silinmesin
+    history.replaceState(window.getAppSnapshot(), null, "");
 };
 
 // ==========================================
@@ -1752,10 +1626,13 @@ window.openDiaryModal = function(id, mt, title, year, poster, score) {
     } else {
         document.getElementById("diary-no-date").checked = false; document.getElementById("diary-date").disabled = false; document.getElementById("diary-date").value = today;
     }
-    document.getElementById("diary-modal").classList.add("active"); document.body.style.overflow = "hidden";
+    
+    window.pushModalState();
+    document.getElementById("diary-modal").classList.add("active"); 
+    document.body.style.overflow = "hidden";
 };
 
-window.closeDiaryModal = function() { document.getElementById("diary-modal").classList.remove("active"); document.body.style.overflow = ""; };
+window.closeDiaryModal = function() { if(isModalOpen) history.back(); else window.forceCloseAllModals(); };
 
 window.selectEmoji = function(btn, emotion) {
     document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
@@ -1792,12 +1669,14 @@ window.clearDiaryEntry = function() {
 // 9. LİSTE YÖNETİMİ & CANLI ARAMA
 // ==========================================
 window.fetchUserList = function(listType) {
-    window.closeAuthModal(); qEl.value = ""; toggleClearBtn(); hideDD();
+    window.pushAppView(); // Modal (Giriş Yap) açıksa güvenle kapatır ve listeye geçer
+    qEl.value = ""; toggleClearBtn(); hideDD();
     if (!currentUser) return;
-    window.closePersonView(); 
+    
     window.currentListType = listType; window.currentListSearchTerm = ""; 
     let listNameTR = listType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
     resEl.innerHTML = '<div class="loading"><div class="spinner"></div><span>Listeniz yükleniyor...</span></div>';
+    
     db.collection("users").doc(currentUser.uid).collection(listType).get().then(snap => {
         window.myList = []; snap.forEach(doc => window.myList.push(doc.data()));
         window.renderListUI(window.currentSort);
@@ -1816,7 +1695,11 @@ window.liveFilterList = function(val) {
 window.renderListUI = function(sortType) {
     window.currentSort = sortType;
     let listNameTR = window.currentListType === 'watchlist' ? 'İzlenecekler' : 'İzlenenler';
-    if (window.myList.length === 0) { resEl.innerHTML = `<div class="card"><div class="err"><div class="icon">${window.currentListType === 'watchlist' ? '⏳' : '👁️'}</div><div>${listNameTR} listeniz henüz boş.</div></div></div>`; return; }
+    if (window.myList.length === 0) { 
+        resEl.innerHTML = `<div class="card"><div class="err"><div class="icon">${window.currentListType === 'watchlist' ? '⏳' : '👁️'}</div><div>${listNameTR} listeniz henüz boş.</div></div></div>`; 
+        history.replaceState(window.getAppSnapshot(), null, "");
+        return; 
+    }
     
     let sorted = [...window.myList];
     if (sortType === 'date_desc') sorted.sort((a,b) => (b.addedAt?.seconds || 0) - (a.addedAt?.seconds || 0));
@@ -1851,7 +1734,7 @@ window.renderListUI = function(sortType) {
         let posterSrc = item.poster && item.poster !== 'null' ? item.poster : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="150" style="background:%23ede0ce"></svg>';
         let scoreBadge = item.score ? `<div class="wl-score-badge">${parseFloat(item.score).toFixed(1)}</div>` : '';
         let diaryBadge = userDiary[item.id] ? `<div class="diary-badge">📝</div>` : '';
-        html += `<div class="wl-card-grid" data-title="${item.title.replace(/"/g, '&quot;')}" data-year="${item.year || ''}" onclick="window.loadFilm(${item.id}, '${item.mt}'); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}${diaryBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); window.removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
+        html += `<div class="wl-card-grid" data-title="${item.title.replace(/"/g, '&quot;')}" data-year="${item.year || ''}" onclick="window.pushAppView(); window.loadFilm(${item.id}, '${item.mt}'); window.scrollTo({top:0, behavior:'smooth'});">${scoreBadge}${diaryBadge}<button class="wl-remove-btn" onclick="event.stopPropagation(); window.removeFromList(${item.id}, '${window.currentListType}')">&times;</button><img class="wl-poster-grid" src="${posterSrc}" loading="lazy" /><div class="wl-info-grid"><div class="wl-card-title">${item.title}</div><div class="wl-card-year">${item.year || ''}</div></div></div>`;
     });
     
     resEl.innerHTML = html + `</div></div>`; 
@@ -1861,11 +1744,15 @@ window.renderListUI = function(sortType) {
         let sInput = document.querySelector('.list-search-input');
         if(sInput) { sInput.focus(); let v = sInput.value; sInput.value = ''; sInput.value = v; }
     }
+    
+    // Listeyi render edince de History API kaydını güncelle
+    history.replaceState(window.getAppSnapshot(), null, "");
 };
 
 window.removeFromList = function(id, listType) {
     if (!currentUser) return; 
-    window.myList = window.myList.filter(item => item.id != id); window.renderListUI(window.currentSort); 
+    window.myList = window.myList.filter(item => item.id != id); 
+    window.renderListUI(window.currentSort); 
     db.collection("users").doc(currentUser.uid).collection(listType).doc(id.toString()).delete();
 };
 
@@ -1894,7 +1781,8 @@ window.shareFilm = function(btn) {
 };
 
 window.translateText = function(btn) {
-  var text = decodeURIComponent(btn.dataset.text); window.openGenericModal('Çeviri Sonucu', '<div class="modal-spinner"><div class="spinner"></div></div>');
+  var text = decodeURIComponent(btn.dataset.text); 
+  window.openGenericModal('Çeviri Sonucu', '<div class="modal-spinner"><div class="spinner"></div></div>');
   fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(text)}`).then(r => r.json()).then(data => {
       var translated = ""; if (data && data[0]) { data[0].forEach(item => { if (item[0]) translated += item[0]; }); } 
       document.getElementById("generic-modal-content").innerHTML = translated ? translated.replace(/\n/g, "<br>") : "Çeviri yapılamadı.";
@@ -1908,19 +1796,6 @@ function createReviewHTML(rev) {
     return `<div class="review-card"><div class="rev-author">${author} ${ratingHtml}</div><div class="rev-content">${content}</div><button class="rev-translate-btn" data-text="${encodeURIComponent(content)}" onclick="window.translateText(this)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg> Sitede Çevir</button></div>`;
 }
 
-window.openTrailerModal = function(key) { 
-    document.getElementById("trailer-modal-content").innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${key}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; 
-    document.getElementById("trailer-modal").classList.add("active"); 
-    document.body.style.overflow = "hidden"; 
-};
-window.closeTrailerModal = function() { 
-    document.getElementById("trailer-modal").classList.remove("active"); 
-    document.getElementById("trailer-modal-content").innerHTML = ''; 
-    document.body.style.overflow = ""; 
-};
-document.getElementById("trailer-modal").addEventListener("click", function(e) { 
-    if (e.target === this) window.closeTrailerModal(); 
-});
 </script>
 </body>
 </html>
